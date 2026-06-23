@@ -71,6 +71,8 @@
 
         <div class="section-title">Quản lý</div>
         <a href="<%= ctx %>/loan?action=list">📋 Mượn / Trả sách</a>
+        <a href="<%= ctx %>/fine?action=list">💰 Quản lý phạt</a>
+        <a href="<%= ctx %>/fine?action=stats">📊 Thống kê phạt</a>
         <a href="#">👥 Thành viên</a>
         <a href="#">📖 Sách</a>
         <a href="#">📦 Bản sao sách</a>

@@ -17,6 +17,10 @@ public class Fine {
     private String issueDate;
     private String paidDate;
     private String paidStatus;
+    // join fields
+    private String memberName;
+    private String borrowDate;
+    private String dueDate;
 
     public Fine() {
     }
@@ -86,6 +90,13 @@ public class Fine {
     public void setPaidStatus(String paidStatus) {
         this.paidStatus = paidStatus;
     }
-    
-    
+
+    public String getMemberName() { return memberName; }
+    public void setMemberName(String memberName) { this.memberName = memberName; }
+
+    public String getBorrowDate() { return borrowDate; }
+    public void setBorrowDate(String borrowDate) { this.borrowDate = borrowDate; }
+
+    public String getDueDate() { return dueDate; }
+    public void setDueDate(String dueDate) { this.dueDate = dueDate; }
 }
