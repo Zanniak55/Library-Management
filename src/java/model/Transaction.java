@@ -17,6 +17,7 @@ public class Transaction {
     private String status;        // "Đang mượn" / "Đã trả" / "Quá hạn"
     private int memberID;
     private int staffID;
+    private String memberName;
 
     public Transaction() {
     }
@@ -85,6 +86,14 @@ public class Transaction {
 
     public void setStaffID(int staffID) {
         this.staffID = staffID;
+    }
+
+    public String getMemberName() {
+        return memberName;
+    }
+
+    public void setMemberName(String memberName) {
+        this.memberName = memberName;
     }
     
     
