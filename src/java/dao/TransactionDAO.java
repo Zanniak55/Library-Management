@@ -15,6 +15,44 @@ import model.Transaction;
  * @author Lenovo
  */
 public class TransactionDAO extends DBContext{
+    // Tìm kiếm giao dịch theo tên thành viên và trạng thái
+    public List<Transaction> searchTransactions(String keyword, String status) {
+        List<Transaction> list = new ArrayList<>();
+        String sql = """
+            SELECT t.TransactionID, t.BorrowDate, t.DueDate, t.ReturnDate,
+                   t.Status, t.MemberID, t.StaffID, m.FullName AS MemberName
+            FROM [Transaction] t
+            JOIN Member m ON t.MemberID = m.MemberID
+            WHERE (? = '' OR m.FullName LIKE ?)
+              AND (? = '' OR t.Status = ?)
+            ORDER BY t.TransactionID DESC
+            """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            String kw = keyword == null ? "" : keyword.trim();
+            String st = status  == null ? "" : status.trim();
+            ps.setString(1, kw);
+            ps.setString(2, "%" + kw + "%");
+            ps.setString(3, st);
+            ps.setString(4, st);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Transaction tr = new Transaction();
+                tr.setTransactionID(rs.getInt("TransactionID"));
+                tr.setBorrowDate(rs.getString("BorrowDate"));
+                tr.setDueDate(rs.getString("DueDate"));
+                tr.setReturnDate(rs.getString("ReturnDate"));
+                tr.setStatus(rs.getString("Status"));
+                tr.setMemberID(rs.getInt("MemberID"));
+                tr.setMemberName(rs.getString("MemberName"));
+                tr.setStaffID(rs.getInt("StaffID"));
+                list.add(tr);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     // Lấy tất cả giao dịch kèm tên thành viên
     public List<Transaction> getAllTransactions() {
         List<Transaction> list = new ArrayList<>();

@@ -18,6 +18,13 @@
             .ok  { background: #d4edda; color: #155724; }
             .err { background: #f8d7da; color: #721c24; }
             .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+            .search-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; background: white; padding: 12px 16px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+            .search-bar input[type=text] { flex: 1; padding: 7px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
+            .search-bar select { padding: 7px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
+            .search-bar button { padding: 7px 16px; background: #2980b9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; }
+            .search-bar button:hover { background: #1f6fa3; }
+            .search-bar a.clear-btn { padding: 7px 12px; color: #666; font-size: 13px; text-decoration: none; }
+            .search-bar a.clear-btn:hover { color: #333; }
         </style>
     </head>
     <body>
@@ -25,7 +32,7 @@
         <div class="topbar">
             <h2>Danh sách mượn / trả sách</h2>
             <span>
-                <a href="${pageContext.request.contextPath}/dashboard.jsp">Dashboard</a> |
+                <a href="${pageContext.request.contextPath}/dashboard">Dashboard</a> |
                 <a href="${pageContext.request.contextPath}/loan?action=logout">Đăng xuất</a>
             </span>
         </div>
@@ -37,6 +44,27 @@
 
         <a href="${pageContext.request.contextPath}/loan?action=borrow" class="btn">+ Tạo phiếu mượn</a>
         <br><br>
+
+        <%
+            String kw  = (String) request.getAttribute("keyword");
+            String st  = (String) request.getAttribute("status");
+            if (kw == null) kw = "";
+            if (st == null) st = "";
+        %>
+        <form method="get" action="${pageContext.request.contextPath}/loan" class="search-bar">
+            <input type="hidden" name="action" value="list">
+            <input type="text" name="keyword" placeholder="Tìm theo tên thành viên..." value="<%= kw %>">
+            <select name="status">
+                <option value="" <%= st.isEmpty() ? "selected" : "" %>>-- Tất cả trạng thái --</option>
+                <option value="Đang mượn"  <%= "Đang mượn".equals(st)  ? "selected" : "" %>>Đang mượn</option>
+                <option value="Đã trả"     <%= "Đã trả".equals(st)     ? "selected" : "" %>>Đã trả</option>
+                <option value="Quá hạn"    <%= "Quá hạn".equals(st)    ? "selected" : "" %>>Quá hạn</option>
+            </select>
+            <button type="submit">Tìm kiếm</button>
+            <% if (!kw.isEmpty() || !st.isEmpty()) { %>
+            <a href="${pageContext.request.contextPath}/loan?action=list" class="clear-btn">✕ Xóa bộ lọc</a>
+            <% } %>
+        </form>
 
         <table>
             <tr>

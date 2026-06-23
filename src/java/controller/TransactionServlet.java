@@ -29,7 +29,11 @@ public class TransactionServlet extends HttpServlet {
 
         switch (action) {
             case "list" -> {
-                request.setAttribute("transactions", dao.getAllTransactions());
+                String keyword = request.getParameter("keyword");
+                String status  = request.getParameter("status");
+                request.setAttribute("transactions", dao.searchTransactions(keyword, status));
+                request.setAttribute("keyword", keyword != null ? keyword : "");
+                request.setAttribute("status",  status  != null ? status  : "");
                 request.getRequestDispatcher("/quan_li_tra_va_muon/loan_list.jsp")
                         .forward(request, response);
             }

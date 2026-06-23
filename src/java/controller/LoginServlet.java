@@ -34,7 +34,7 @@ public class LoginServlet extends HttpServlet {
         Staff staff = staffDAO.login(email, password);
         if (staff != null) {
             request.getSession().setAttribute("staff", staff);
-            response.sendRedirect(request.getContextPath() + "/dashboard.jsp");
+            response.sendRedirect(request.getContextPath() + "/dashboard");
         } else {
             request.setAttribute("error", "Email hoặc mật khẩu không đúng!");
             request.getRequestDispatcher("/login.jsp").forward(request, response);
