@@ -372,7 +372,10 @@
            if ("error".equals(msg)) { %><div class="msg err">✕ Có lỗi xảy ra, thử lại.</div><% } %>
 
                 <div class="toolbar">
-                    <a href="<%= ctx %>/fine?action=add" class="btn-create">+ Tạo phiếu phạt</a>
+                    <div style="display:flex;gap:10px">
+                        <a href="<%= ctx %>/fine?action=add" class="btn-create">+ Tạo phiếu phạt</a>
+                        <a href="<%= ctx %>/fine?action=stats" style="background:#4a90d9;color:white;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:bold">📊 Thống kê</a>
+                    </div>
                 </div>
 
                 <%

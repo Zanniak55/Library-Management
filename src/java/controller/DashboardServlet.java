@@ -24,7 +24,9 @@ public class DashboardServlet extends HttpServlet {
         request.setAttribute("activeMembers", dao.getActiveMembers());
         request.setAttribute("totalStaff",    dao.getTotalStaff());
         request.setAttribute("totalBooks",    dao.getTotalBooks());
-        request.setAttribute("borrowingNow",  dao.getBorrowingNow());
+        request.setAttribute("borrowingNow",   dao.getBorrowingNow());
+        request.setAttribute("monthlyBorrows", dao.getMonthlyBorrows());
+        request.setAttribute("topBooks",       dao.getTopBooks());
 
         request.getRequestDispatcher("/dashboard.jsp").forward(request, response);
     }
