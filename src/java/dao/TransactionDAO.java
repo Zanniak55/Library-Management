@@ -221,6 +221,76 @@ public class TransactionDAO extends DBContext{
         return list;
     }
 
+    // Tự động cập nhật phiếu quá hạn chưa trả → "Quá hạn"
+    public void updateOverdue() {
+        String sql = "UPDATE [Transaction] SET Status = N'Quá hạn' " +
+                     "WHERE DueDate < CAST(GETDATE() AS DATE) AND Status = N'Đang mượn'";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Lấy chi tiết sách trong một phiếu mượn
+    public List<String[]> getTransactionDetails(int transactionID) {
+        List<String[]> list = new ArrayList<>();
+        String sql = """
+            SELECT bc.CopyID, bc.Barcode, bc.Status AS CopyStatus,
+                   b.Title, b.ISBN
+            FROM Transaction_Detail td
+            JOIN Book_Copy bc ON td.CopyID = bc.CopyID
+            JOIN Book b ON bc.ISBN = b.ISBN
+            WHERE td.TransactionID = ?
+            """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, transactionID);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(new String[]{
+                    rs.getString("CopyID"),
+                    rs.getString("Barcode"),
+                    rs.getString("Title"),
+                    rs.getString("ISBN"),
+                    rs.getString("CopyStatus")
+                });
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    // Lấy thông tin một phiếu mượn theo ID
+    public Transaction getTransactionByID(int transactionID) {
+        String sql = """
+            SELECT t.TransactionID, t.BorrowDate, t.DueDate, t.ReturnDate,
+                   t.Status, t.MemberID, t.StaffID, m.FullName AS MemberName
+            FROM [Transaction] t
+            JOIN Member m ON t.MemberID = m.MemberID
+            WHERE t.TransactionID = ?
+            """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, transactionID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Transaction tr = new Transaction();
+                tr.setTransactionID(rs.getInt("TransactionID"));
+                tr.setBorrowDate(rs.getString("BorrowDate"));
+                tr.setDueDate(rs.getString("DueDate"));
+                tr.setReturnDate(rs.getString("ReturnDate"));
+                tr.setStatus(rs.getString("Status"));
+                tr.setMemberID(rs.getInt("MemberID"));
+                tr.setMemberName(rs.getString("MemberName"));
+                tr.setStaffID(rs.getInt("StaffID"));
+                return tr;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     // Lấy danh sách thành viên
     public List<String[]> getActiveMembers() {
         List<String[]> list = new ArrayList<>();

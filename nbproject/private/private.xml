@@ -5,11 +5,14 @@
         <group>
             <file>file:/J:/FPTU/2026/FPTU_SU26/PRJ301/LibraryMng/LibraryManagementPRJ/src/java/dao/TransactionDAO.java</file>
             <file>file:/J:/FPTU/2026/FPTU_SU26/PRJ301/LibraryMng/LibraryManagementPRJ/src/java/dao/DBContext.java</file>
+            <file>file:/J:/FPTU/2026/FPTU_SU26/PRJ301/LibraryMng/LibraryManagementPRJ/web/login.jsp</file>
+            <file>file:/J:/FPTU/2026/FPTU_SU26/PRJ301/LibraryMng/LibraryManagementPRJ/src/java/dao/DashboardDAO.java</file>
             <file>file:/J:/FPTU/2026/FPTU_SU26/PRJ301/LibraryMng/LibraryManagementPRJ/src/java/controller/TransactionServlet.java</file>
             <file>file:/J:/FPTU/2026/FPTU_SU26/PRJ301/LibraryMng/LibraryManagementPRJ/web/quan_li_tra_va_muon/loan_list.jsp</file>
             <file>file:/J:/FPTU/2026/FPTU_SU26/PRJ301/LibraryMng/LibraryManagementPRJ/web/quan_li_tra_va_muon/loan_form.jsp</file>
             <file>file:/J:/FPTU/2026/FPTU_SU26/PRJ301/LibraryMng/LibraryManagementPRJ/src/java/model/Fine.java</file>
             <file>file:/J:/FPTU/2026/FPTU_SU26/PRJ301/LibraryMng/LibraryManagementPRJ/src/java/dao/StaffDAO.java</file>
+            <file>file:/J:/FPTU/2026/FPTU_SU26/PRJ301/LibraryMng/LibraryManagementPRJ/web/index.jsp</file>
             <file>file:/J:/FPTU/2026/FPTU_SU26/PRJ301/LibraryMng/LibraryManagementPRJ/src/java/model/Transaction.java</file>
         </group>
     </open-files>

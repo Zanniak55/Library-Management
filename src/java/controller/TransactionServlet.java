@@ -29,12 +29,20 @@ public class TransactionServlet extends HttpServlet {
 
         switch (action) {
             case "list" -> {
+                dao.updateOverdue();
                 String keyword = request.getParameter("keyword");
                 String status  = request.getParameter("status");
                 request.setAttribute("transactions", dao.searchTransactions(keyword, status));
                 request.setAttribute("keyword", keyword != null ? keyword : "");
                 request.setAttribute("status",  status  != null ? status  : "");
                 request.getRequestDispatcher("/quan_li_tra_va_muon/loan_list.jsp")
+                        .forward(request, response);
+            }
+            case "detail" -> {
+                int id = Integer.parseInt(request.getParameter("id"));
+                request.setAttribute("transaction", dao.getTransactionByID(id));
+                request.setAttribute("details", dao.getTransactionDetails(id));
+                request.getRequestDispatcher("/quan_li_tra_va_muon/loan_detail.jsp")
                         .forward(request, response);
             }
             case "borrow" -> {

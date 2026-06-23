@@ -10,12 +10,9 @@ import model.Staff;
 @WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
 public class LoginServlet extends HttpServlet {
 
-    private final StaffDAO staffDAO = new StaffDAO();
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Nếu đã đăng nhập rồi thì chuyển thẳng vào trang quản lý
         Staff staff = (Staff) request.getSession().getAttribute("staff");
         if (staff != null) {
             response.sendRedirect(request.getContextPath() + "/loan");
@@ -31,7 +28,7 @@ public class LoginServlet extends HttpServlet {
         String email    = request.getParameter("email");
         String password = request.getParameter("password");
 
-        Staff staff = staffDAO.login(email, password);
+        Staff staff = new StaffDAO().login(email, password);
         if (staff != null) {
             request.getSession().setAttribute("staff", staff);
             response.sendRedirect(request.getContextPath() + "/dashboard");
