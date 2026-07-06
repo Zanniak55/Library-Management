@@ -335,7 +335,7 @@
                 <a href="<%= ctx %>/loan?action=list">📋 Mượn / Trả sách</a>
                 <a href="<%= ctx %>/fine?action=list">💰 Quản lý phạt</a>
                 <a href="<%= ctx %>/fine?action=stats">📊 Thống kê phạt</a>
-                <a href="#">👥 Thành viên</a>
+                <a href="<%= ctx %>/MemberServlet">👥 Thành viên</a>
                 <a href="#">📖 Sách</a>
                 <a href="#">📦 Bản sao sách</a>
                 <a href="#">🏷️ Thể loại</a>
@@ -343,7 +343,7 @@
                 <a href="#">🏢 Nhà xuất bản</a>
 
                 <div class="section-title">Hệ thống</div>
-                <a href="#">👤 Quản lý nhân sự</a>
+                <a href="<%= ctx %>/StaffServlet">👤 Quản lý nhân sự</a>
                 <a href="<%= ctx %>/loan?action=logout">🚪 Đăng xuất</a>
             </div>
         </div>
@@ -412,7 +412,7 @@
                         <h4>➕ Tạo phiếu mượn</h4>
                         <p>Tạo phiếu mượn sách mới</p>
                     </a>
-                    <a href="#" class="quick-card">
+                    <a href="<%= ctx %>/MemberServlet" class="quick-card">
                         <h4>👥 Thành viên</h4>
                         <p>Quản lý danh sách thành viên</p>
                     </a>
@@ -424,7 +424,7 @@
                         <h4>📦 Bản sao sách</h4>
                         <p>Quản lý bản sao vật lý</p>
                     </a>
-                    <a href="#" class="quick-card">
+                    <a href="<%= ctx %>/StaffServlet" class="quick-card">
                         <h4>👤 Nhân sự</h4>
                         <p>Quản lý tài khoản nhân viên</p>
                     </a>
