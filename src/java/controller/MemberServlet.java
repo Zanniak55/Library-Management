@@ -125,13 +125,51 @@ public class MemberServlet extends HttpServlet {
         listMembers(req, resp);
     }
 
-    private void insertMember(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    private void insertMember(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        Member m = buildMemberFromRequest(request);
+        boolean ok = dao.addMember(m);
+        if (ok) {
+            request.setAttribute("successMsg", "Thêm thành viên \"" + m.getFullName() + "\" thành công!");
+        } else {
+            request.setAttribute("errorMsg", "Thêm thất bại! Username có thể đã tồn tại.");
+        }
+        listMembers(request, response);
     }
 
-    private void updateMember(HttpServletRequest request, HttpServletResponse response) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    private void updateMember(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int id = Integer.parseInt(request.getParameter("memberID"));
+            Member m = buildMemberFromRequest(request);
+            m.setMemberID(id);
+            boolean ok = dao.updateMember(m);
+            if (ok) {
+                request.setAttribute("successMsg", "Cập nhật thành viên thành công!");
+            } else {
+                request.setAttribute("errorMsg", "Cập nhật thất bại!");
+            }
+        } catch (NumberFormatException e) {
+            request.setAttribute("errorMsg", "ID thành viên không hợp lệ!");
+        }
+        listMembers(request, response);
     }
 
+    /**
+     * Đọc dữ liệu từ request form và tạo đối tượng Member.
+     */
+    private Member buildMemberFromRequest(HttpServletRequest request) {
+        Member m = new Member();
+        m.setFullName(request.getParameter("fullName"));
+        m.setEmail(request.getParameter("email"));
+        m.setPhone(request.getParameter("phone"));
+        m.setAddress(request.getParameter("address"));
+        m.setMemberType(request.getParameter("memberType"));
+        m.setMembershipDate(request.getParameter("membershipDate"));
+        m.setStatus(request.getParameter("status"));
+        m.setUsername(request.getParameter("username"));
+        m.setPassword(request.getParameter("password"));
+        return m;
+    }
 
 }

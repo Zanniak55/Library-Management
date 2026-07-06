@@ -86,14 +86,14 @@
         <a href="<%= ctx %>/dashboard">🏠 Dashboard</a>
         <div class="section-title">Quản lý</div>
         <a href="<%= ctx %>/loan?action=list" class="active">📋 Mượn / Trả sách</a>
-        <a href="#">👥 Thành viên</a>
+        <a href="<%= ctx %>/MemberServlet">👥 Thành viên</a>
         <a href="#">📖 Sách</a>
         <a href="#">📦 Bản sao sách</a>
         <a href="#">🏷️ Thể loại</a>
         <a href="#">✍️ Tác giả</a>
         <a href="#">🏢 Nhà xuất bản</a>
         <div class="section-title">Hệ thống</div>
-        <a href="#">👤 Quản lý nhân sự</a>
+        <a href="<%= ctx %>/StaffServlet">👤 Quản lý nhân sự</a>
         <a href="<%= ctx %>/loan?action=logout">🚪 Đăng xuất</a>
     </div>
 </div>
