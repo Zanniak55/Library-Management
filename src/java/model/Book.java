@@ -10,37 +10,30 @@ package model;
  */
 public class Book {
 
-    private int id;
-    private String title;
-    private String author;
-    private String category;
-    private int quantity;
-    private int available;
     private String isbn;
-    private int publishYear;
+    private String title;
+    private String language;
+    private int publicationYear;
+    private int totalQuantity;
+    private int availableQuantity;
+    private int publisherID;
+    private int categoryID;
+
+    // ── Field JOIN để hiển thị (không lưu DB) ────────────────────────────────
+    private String authors;        // từ bảng Author (STRING_AGG)
+    private String categoryName;   // từ bảng Category
+    private String publisherName;  // từ bảng Publisher
 
     public Book() {
     }
 
-    public Book(int id, String title, String author, String category,
-            int quantity, int available, String isbn, int publishYear) {
-        this.id = id;
-        this.title = title;
-        this.author = author;
-        this.category = category;
-        this.quantity = quantity;
-        this.available = available;
+    // Getters & Setters
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
         this.isbn = isbn;
-        this.publishYear = publishYear;
-    }
-
-    // Getters and Setters
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getTitle() {
@@ -51,56 +44,75 @@ public class Book {
         this.title = title;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getLanguage() {
+        return language;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
-    public String getCategory() {
-        return category;
+    public int getPublicationYear() {
+        return publicationYear;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setPublicationYear(int publicationYear) {
+        this.publicationYear = publicationYear;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public int getTotalQuantity() {
+        return totalQuantity;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setTotalQuantity(int totalQuantity) {
+        this.totalQuantity = totalQuantity;
     }
 
-    public int getAvailable() {
-        return available;
+    public int getAvailableQuantity() {
+        return availableQuantity;
     }
 
-    public void setAvailable(int available) {
-        this.available = available;
+    public void setAvailableQuantity(int availableQuantity) {
+        this.availableQuantity = availableQuantity;
     }
 
-    public String getIsbn() {
-        return isbn;
+    public int getPublisherID() {
+        return publisherID;
     }
 
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
+    public void setPublisherID(int publisherID) {
+        this.publisherID = publisherID;
     }
 
-    public int getPublishYear() {
-        return publishYear;
+    public int getCategoryID() {
+        return categoryID;
     }
 
-    public void setPublishYear(int publishYear) {
-        this.publishYear = publishYear;
+    public void setCategoryID(int categoryID) {
+        this.categoryID = categoryID;
     }
 
-    @Override
-    public String toString() {
-        return "Book{id=" + id + ", title='" + title + "', author='" + author + "'}";
+    public String getAuthors() {
+        return authors;
+    }
+
+    public void setAuthors(String authors) {
+        this.authors = authors;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public String getPublisherName() {
+        return publisherName;
+    }
+
+    public void setPublisherName(String publisherName) {
+        this.publisherName = publisherName;
     }
 }

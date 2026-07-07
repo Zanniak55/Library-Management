@@ -71,15 +71,17 @@ public class BookServlet extends HttpServlet {
         switch (action) {
 
             case "new":
-                // Mở form thêm sách (book = null → form trống)
+                // Truyền danh sách Category và Publisher để hiển thị dropdown
                 request.setAttribute("book", null);
                 request.setAttribute("formTitle", "Thêm Sách Mới");
+                request.setAttribute("categories", bookDAO.getAllCategories());
+                request.setAttribute("publishers", bookDAO.getAllPublishers());
                 request.getRequestDispatcher("/views/book_form.jsp").forward(request, response);
                 break;
 
             case "edit":
-                int editId = Integer.parseInt(request.getParameter("id"));
-                Book editBook = bookDAO.getBookById(editId);
+                String editIsbn = request.getParameter("isbn");
+                Book editBook = bookDAO.getBookByISBN(editIsbn);
                 if (editBook == null) {
                     request.getSession().setAttribute("error", "Không tìm thấy sách.");
                     response.sendRedirect("books");
@@ -87,12 +89,14 @@ public class BookServlet extends HttpServlet {
                 }
                 request.setAttribute("book", editBook);
                 request.setAttribute("formTitle", "Chỉnh Sửa Sách");
+                request.setAttribute("categories", bookDAO.getAllCategories());
+                request.setAttribute("publishers", bookDAO.getAllPublishers());
                 request.getRequestDispatcher("/views/book_form.jsp").forward(request, response);
                 break;
 
             case "delete":
-                int delId = Integer.parseInt(request.getParameter("id"));
-                boolean deleted = bookDAO.deleteBook(delId);
+                String delIsbn = request.getParameter("isbn");
+                boolean deleted = bookDAO.deleteBook(delIsbn);
                 request.getSession().setAttribute(
                         deleted ? "success" : "error",
                         deleted ? "Xóa sách thành công." : "Xóa sách thất bại."
@@ -109,8 +113,7 @@ public class BookServlet extends HttpServlet {
                 break;
 
             default: // list
-                List<Book> allBooks = bookDAO.getAllBooks();
-                request.setAttribute("books", allBooks);
+                request.setAttribute("books", bookDAO.getAllBooks());
                 request.getRequestDispatcher("/views/book_list.jsp").forward(request, response);
                 break;
         }
@@ -130,32 +133,29 @@ public class BookServlet extends HttpServlet {
         //processRequest(request, response);
         request.setCharacterEncoding("UTF-8");
 
-        String idParam = request.getParameter("id");
-        boolean isEdit = (idParam != null && !idParam.isEmpty());
+        String isbnParam = request.getParameter("isbn");
+        String actionParam = request.getParameter("actionType"); // "add" hoặc "edit"
+        boolean isEdit = "edit".equals(actionParam);
 
         Book book = new Book();
-        if (isEdit) {
-            book.setId(Integer.parseInt(idParam));
-        }
+        book.setIsbn(isbnParam == null ? "" : isbnParam.trim());
         book.setTitle(request.getParameter("title").trim());
-        book.setAuthor(request.getParameter("author").trim());
-        book.setCategory(request.getParameter("category").trim());
-        book.setIsbn(request.getParameter("isbn").trim());
-
-        // Validate số nguyên an toàn
-        int qty = parseIntSafe(request.getParameter("quantity"), 0);
-        int avail = parseIntSafe(request.getParameter("available"), 0);
-        int year = parseIntSafe(request.getParameter("publishYear"), 0);
-        book.setQuantity(qty);
-        book.setAvailable(Math.min(avail, qty));   // available không vượt quá quantity
-        book.setPublishYear(year);
+        book.setLanguage(request.getParameter("language") == null ? "Tiếng Việt"
+                : request.getParameter("language").trim());
+        book.setPublicationYear(parseIntSafe(request.getParameter("publicationYear"), 0));
+        book.setTotalQuantity(parseIntSafe(request.getParameter("totalQuantity"), 0));
+        // availableQuantity không được vượt quá totalQuantity
+        int avail = parseIntSafe(request.getParameter("availableQuantity"), 0);
+        book.setAvailableQuantity(Math.min(avail, book.getTotalQuantity()));
+        book.setPublisherID(parseIntSafe(request.getParameter("publisherID"), 0));
+        book.setCategoryID(parseIntSafe(request.getParameter("categoryID"), 0));
 
         boolean ok;
         String msg;
 
         if (isEdit) {
             ok = bookDAO.updateBook(book);
-            msg = ok ? "Cập nhật sách thành công." : "Cập nhật thất bại.";
+            msg = ok ? "Cập nhật sách thành công." : "Cập nhật sách thất bại.";
         } else {
             ok = bookDAO.addBook(book);
             msg = ok ? "Thêm sách thành công." : "Thêm sách thất bại.";
@@ -171,16 +171,16 @@ public class BookServlet extends HttpServlet {
             return Integer.parseInt(s.trim());
         } catch (Exception e) {
             return defaultVal;
-        }    
-}
+        }
+    }
 
-/**
- * Returns a short description of the servlet.
- *
- * @return a String containing servlet description
- */
-@Override
-public String getServletInfo() {
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 
