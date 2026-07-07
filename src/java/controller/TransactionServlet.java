@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.Staff;
 
-@WebServlet(name = "TransactionServlet", urlPatterns = {"/loan"})
+@WebServlet(name = "TransactionServlet", urlPatterns = {"/loans"})
 public class TransactionServlet extends HttpServlet {
 
     @Override

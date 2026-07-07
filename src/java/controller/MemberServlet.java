@@ -11,7 +11,7 @@ import model.Member;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "MemberServlet", urlPatterns = {"/MemberServlet"})
+@WebServlet(name = "MemberServlet", urlPatterns = {"/members"})
 public class MemberServlet extends HttpServlet {
 
     private final MemberDAO dao = new MemberDAO();
