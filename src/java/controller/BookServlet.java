@@ -74,7 +74,7 @@ public class BookServlet extends HttpServlet {
                 // Mở form thêm sách (book = null → form trống)
                 request.setAttribute("book", null);
                 request.setAttribute("formTitle", "Thêm Sách Mới");
-                request.getRequestDispatcher("/WEB-INF/views/book_form.jsp").forward(request, response);
+                request.getRequestDispatcher("/views/book_form.jsp").forward(request, response);
                 break;
 
             case "edit":
@@ -87,7 +87,7 @@ public class BookServlet extends HttpServlet {
                 }
                 request.setAttribute("book", editBook);
                 request.setAttribute("formTitle", "Chỉnh Sửa Sách");
-                request.getRequestDispatcher("/WEB-INF/views/book_form.jsp").forward(request, response);
+                request.getRequestDispatcher("/views/book_form.jsp").forward(request, response);
                 break;
 
             case "delete":
@@ -105,13 +105,13 @@ public class BookServlet extends HttpServlet {
                 List<Book> searchResult = bookDAO.searchBooks(keyword == null ? "" : keyword);
                 request.setAttribute("books", searchResult);
                 request.setAttribute("keyword", keyword);
-                request.getRequestDispatcher("/WEB-INF/views/book_list.jsp").forward(request, response);
+                request.getRequestDispatcher("/views/book_list.jsp").forward(request, response);
                 break;
 
             default: // list
                 List<Book> allBooks = bookDAO.getAllBooks();
                 request.setAttribute("books", allBooks);
-                request.getRequestDispatcher("/WEB-INF/views/book_list.jsp").forward(request, response);
+                request.getRequestDispatcher("/views/book_list.jsp").forward(request, response);
                 break;
         }
     }

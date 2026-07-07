@@ -24,8 +24,6 @@
                 background: #f0f2f5;
                 display: flex;
             }
-
-            /* SIDEBAR */
             .sidebar {
                 width: 220px;
                 min-height: 100vh;
@@ -72,15 +70,11 @@
                 text-transform: uppercase;
                 letter-spacing: 1px;
             }
-
-            /* MAIN */
             .main {
                 margin-left: 220px;
                 flex: 1;
                 padding: 0;
             }
-
-            /* TOPBAR */
             .topbar {
                 background: white;
                 padding: 14px 28px;
@@ -120,13 +114,9 @@
             .btn-logout:hover {
                 background: #f5f5f5;
             }
-
-            /* CONTENT */
             .content {
                 padding: 28px;
             }
-
-            /* STAT CARDS */
             .cards {
                 display: flex;
                 gap: 20px;
@@ -171,8 +161,6 @@
                 font-size: 40px;
                 opacity: 0.4;
             }
-
-            /* QUICK LINKS */
             .quick-title {
                 font-size: 16px;
                 font-weight: bold;
@@ -205,8 +193,6 @@
                 font-size: 12px;
                 color: #888;
             }
-
-            /* STATS SECTION */
             .stats-row {
                 display: flex;
                 gap: 20px;
@@ -264,7 +250,6 @@
                 margin-top: 6px;
                 white-space: nowrap;
             }
-
             .top-card {
                 width: 320px;
                 background: white;
@@ -335,22 +320,21 @@
                 <a href="<%= ctx %>/loan?action=list">📋 Mượn / Trả sách</a>
                 <a href="<%= ctx %>/fine?action=list">💰 Quản lý phạt</a>
                 <a href="<%= ctx %>/fine?action=stats">📊 Thống kê phạt</a>
-                <a href="<%= ctx %>/MemberServlet">👥 Thành viên</a>
-                <a href="#">📖 Sách</a>
-                <a href="#">📦 Bản sao sách</a>
-                <a href="#">🏷️ Thể loại</a>
-                <a href="#">✍️ Tác giả</a>
-                <a href="#">🏢 Nhà xuất bản</a>
+                <a href="<%= ctx %>/members">👥 Thành viên</a>
+                <a href="<%= ctx %>/books">📖 Sách</a>
+                <a href="<%= ctx %>/bookcopies">📦 Bản sao sách</a>
+                <a href="<%= ctx %>/categories">🏷️ Thể loại</a>
+                <a href="<%= ctx %>/authors">✍️ Tác giả</a>
+                <a href="<%= ctx %>/publishers">🏢 Nhà xuất bản</a>
 
                 <div class="section-title">Hệ thống</div>
-                <a href="<%= ctx %>/StaffServlet">👤 Quản lý nhân sự</a>
+                <a href="<%= ctx %>/staffs">👤 Quản lý nhân sự</a>
                 <a href="<%= ctx %>/loan?action=logout">🚪 Đăng xuất</a>
             </div>
         </div>
 
         <!-- MAIN -->
         <div class="main">
-            <!-- TOPBAR -->
             <div class="topbar">
                 <h2>Dashboard</h2>
                 <div class="topbar-right">
@@ -360,43 +344,27 @@
                 </div>
             </div>
 
-            <!-- CONTENT -->
             <div class="content">
                 <!-- STAT CARDS -->
                 <div class="cards">
                     <div class="card card-green">
-                        <div>
-                            <div class="card-num">${totalMembers}</div>
-                            <div class="card-label">Tổng thành viên</div>
-                        </div>
+                        <div><div class="card-num">${totalMembers}</div><div class="card-label">Tổng thành viên</div></div>
                         <div class="card-icon">👥</div>
                     </div>
                     <div class="card card-purple">
-                        <div>
-                            <div class="card-num">${activeMembers}</div>
-                            <div class="card-label">Thành viên hoạt động</div>
-                        </div>
+                        <div><div class="card-num">${activeMembers}</div><div class="card-label">Thành viên hoạt động</div></div>
                         <div class="card-icon">✅</div>
                     </div>
                     <div class="card card-blue">
-                        <div>
-                            <div class="card-num">${totalStaff}</div>
-                            <div class="card-label">Tổng nhân viên</div>
-                        </div>
+                        <div><div class="card-num">${totalStaff}</div><div class="card-label">Tổng nhân viên</div></div>
                         <div class="card-icon">👤</div>
                     </div>
                     <div class="card card-orange">
-                        <div>
-                            <div class="card-num">${totalBooks}</div>
-                            <div class="card-label">Tổng số sách</div>
-                        </div>
+                        <div><div class="card-num">${totalBooks}</div><div class="card-label">Tổng số sách</div></div>
                         <div class="card-icon">📚</div>
                     </div>
                     <div class="card card-red">
-                        <div>
-                            <div class="card-num">${borrowingNow}</div>
-                            <div class="card-label">Đang cho mượn</div>
-                        </div>
+                        <div><div class="card-num">${borrowingNow}</div><div class="card-label">Đang cho mượn</div></div>
                         <div class="card-icon">📤</div>
                     </div>
                 </div>
@@ -412,19 +380,19 @@
                         <h4>➕ Tạo phiếu mượn</h4>
                         <p>Tạo phiếu mượn sách mới</p>
                     </a>
-                    <a href="<%= ctx %>/MemberServlet" class="quick-card">
+                    <a href="<%= ctx %>/members" class="quick-card">
                         <h4>👥 Thành viên</h4>
                         <p>Quản lý danh sách thành viên</p>
                     </a>
-                    <a href="#" class="quick-card">
+                    <a href="<%= ctx %>/books" class="quick-card">
                         <h4>📖 Sách</h4>
                         <p>Thêm, sửa, xóa sách</p>
                     </a>
-                    <a href="#" class="quick-card">
+                    <a href="<%= ctx %>/bookcopies" class="quick-card">
                         <h4>📦 Bản sao sách</h4>
                         <p>Quản lý bản sao vật lý</p>
                     </a>
-                    <a href="<%= ctx %>/StaffServlet" class="quick-card">
+                    <a href="<%= ctx %>/staffs" class="quick-card">
                         <h4>👤 Nhân sự</h4>
                         <p>Quản lý tài khoản nhân viên</p>
                     </a>
@@ -434,7 +402,6 @@
                 <%
                     List<String[]> monthlyBorrows = (List<String[]>) request.getAttribute("monthlyBorrows");
                     List<String[]> topBooks       = (List<String[]>) request.getAttribute("topBooks");
-
                     int maxBorrow = 1;
                     if (monthlyBorrows != null) {
                         for (String[] row : monthlyBorrows) {
@@ -448,16 +415,13 @@
                     }
                 %>
                 <div class="stats-row">
-
-                    <!-- BIỂU ĐỒ CỘT -->
                     <div class="chart-card">
                         <h3>📊 Số phiếu mượn theo tháng (6 tháng gần nhất)</h3>
                         <div class="bar-chart">
                             <% if (monthlyBorrows == null || monthlyBorrows.isEmpty()) { %>
                             <div style="width:100%;text-align:center;color:#aaa;font-size:13px;padding:40px 0">Không có dữ liệu</div>
                             <% } else { for (String[] row : monthlyBorrows) {
-                                int h = (int)((double) Integer.parseInt(row[1]) / maxBorrow * 140);
-                            %>
+                                int h = (int)((double) Integer.parseInt(row[1]) / maxBorrow * 140); %>
                             <div class="bar-col">
                                 <div class="bar-val"><%= row[1] %></div>
                                 <div class="bar-fill" style="height:<%= h %>px" title="<%= row[0] %>: <%= row[1] %> phiếu"></div>
@@ -467,7 +431,6 @@
                         </div>
                     </div>
 
-                    <!-- TOP SÁCH -->
                     <div class="top-card">
                         <h3>🏆 Top sách được mượn nhiều nhất</h3>
                         <% if (topBooks == null || topBooks.isEmpty()) { %>
@@ -476,24 +439,19 @@
                             String[] medals = {"🥇","🥈","🥉","4️⃣","5️⃣"};
                             for (int i = 0; i < topBooks.size(); i++) {
                                 String[] b = topBooks.get(i);
-                                int pct = (int)((double) Integer.parseInt(b[1]) / topMax * 100);
-                        %>
+                                int pct = (int)((double) Integer.parseInt(b[1]) / topMax * 100); %>
                         <div class="top-item">
                             <div class="top-rank"><%= medals[i] %></div>
                             <div class="top-info">
                                 <div class="top-title" title="<%= b[0] %>"><%= b[0] %></div>
-                                <div class="top-bar-wrap">
-                                    <div class="top-bar-inner" style="width:<%= pct %>%"></div>
-                                </div>
+                                <div class="top-bar-wrap"><div class="top-bar-inner" style="width:<%= pct %>%"></div></div>
                             </div>
                             <div class="top-count"><%= b[1] %> lần</div>
                         </div>
                         <% }} %>
                     </div>
-
                 </div>
             </div>
         </div>
-
     </body>
 </html>
