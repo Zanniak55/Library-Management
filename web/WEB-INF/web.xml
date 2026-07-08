@@ -17,7 +17,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>TransactionServlet</servlet-name>
-        <url-pattern>/loan</url-pattern>
+        <url-pattern>/loans</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>LoginServlet</servlet-name>
@@ -33,7 +33,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>MemberServlet</servlet-name>
-        <url-pattern>/MemberServlet</url-pattern>
+        <url-pattern>/members</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>StaffServlet</servlet-name>
