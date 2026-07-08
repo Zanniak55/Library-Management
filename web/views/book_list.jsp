@@ -4,145 +4,216 @@
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
-        <title>Quản Lý Sách</title>
+        <title>${formTitle}</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
         <style>
             body {
                 background: #f5f7fa;
             }
-            .page-header {
+            .form-card {
+                max-width: 700px;
+                margin: 2rem auto;
+                background: #fff;
+                border-radius: 16px;
+                box-shadow: 0 4px 20px rgba(0,0,0,.09);
+                overflow: hidden;
+            }
+            .form-header {
                 background: linear-gradient(135deg, #1e3c72, #2a5298);
                 color: white;
-                padding: 1.5rem 2rem;
-                border-radius: 12px;
-                margin-bottom: 1.5rem;
+                padding: 1.4rem 2rem;
             }
-            .table-card {
-                border-radius: 12px;
-                overflow: hidden;
-                box-shadow: 0 2px 12px rgba(0,0,0,.08);
+            .form-body {
+                padding: 2rem;
             }
-            .table thead {
-                background: #1e3c72;
-                color: #fff;
+            .form-label {
+                font-weight: 600;
+                font-size: .9rem;
+                color: #374151;
             }
-            .badge-avail   {
-                background: #d1fae5;
-                color: #065f46;
-            }
-            .badge-noavail {
-                background: #fee2e2;
-                color: #991b1b;
+            .section-label {
+                font-size: .75rem;
+                text-transform: uppercase;
+                letter-spacing: .08em;
+                color: #9ca3af;
+                border-bottom: 1px solid #e5e7eb;
+                padding-bottom: .3rem;
+                margin-bottom: 1rem;
             }
         </style>
     </head>
     <body>
-        <div class="container py-4">
-
-            <div class="page-header d-flex justify-content-between align-items-center">
-                <div>
-                    <h2 class="mb-0"><i class="bi bi-book-half me-2"></i>Quản Lý Sách</h2>
-                    <small class="opacity-75">Library Management System</small>
-                </div>
-                <a href="books?action=new" class="btn btn-warning fw-semibold">
-                    <i class="bi bi-plus-lg me-1"></i>Thêm Sách
-                </a>
+        <div class="form-card">
+            <div class="form-header">
+                <h4 class="mb-0">
+                    <i class="bi bi-${empty book ? 'plus-circle' : 'pencil-square'} me-2"></i>
+                    ${formTitle}
+                </h4>
             </div>
+            <div class="form-body">
+                <form action="books" method="post" id="bookForm" novalidate>
 
-            <%-- Thông báo --%>
-            <c:if test="${not empty sessionScope.success}">
-                <div class="alert alert-success alert-dismissible fade show">
-                    <i class="bi bi-check-circle-fill me-2"></i>${sessionScope.success}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-                <c:remove var="success" scope="session"/>
-            </c:if>
-            <c:if test="${not empty sessionScope.error}">
-                <div class="alert alert-danger alert-dismissible fade show">
-                    <i class="bi bi-exclamation-circle-fill me-2"></i>${sessionScope.error}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-                <c:remove var="error" scope="session"/>
-            </c:if>
+                    <%-- actionType: phân biệt thêm / sửa --%>
+                    <input type="hidden" name="actionType" value="${empty book ? 'add' : 'edit'}">
 
-            <%-- Tìm kiếm --%>
-            <form action="books" method="get" class="mb-3 d-flex gap-2">
-                <input type="hidden" name="action" value="search">
-                <input type="text" name="keyword" class="form-control"
-                       placeholder="Tìm theo tên sách, tác giả, ISBN…"
-                       value="${not empty keyword ? keyword : ''}">
-                <button class="btn btn-primary px-4"><i class="bi bi-search"></i></button>
-                    <c:if test="${not empty keyword}">
-                    <a href="books" class="btn btn-outline-secondary">Xóa lọc</a>
-                </c:if>
-            </form>
+                    <%-- ── Thông tin cơ bản ── --%>
+                    <p class="section-label">Thông Tin Cơ Bản</p>
 
-            <%-- Bảng danh sách --%>
-            <div class="table-card">
-                <table class="table table-hover mb-0">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>ISBN</th>
-                            <th>Tên Sách</th>
-                            <th>Tác Giả</th>
-                            <th>Thể Loại</th>
-                            <th>NXB</th>
-                            <th>Năm XB</th>
-                            <th class="text-center">SL</th>
-                            <th class="text-center">Còn Lại</th>
-                            <th class="text-center">Thao Tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <c:choose>
-                            <c:when test="${empty books}">
-                                <tr>
-                                    <td colspan="10" class="text-center py-5 text-muted">
-                                        <i class="bi bi-inbox fs-3 d-block mb-2"></i>
-                                        Không có sách nào.
-                                    </td>
-                                </tr>
-                            </c:when>
-                            <c:otherwise>
-                                <c:forEach var="b" items="${books}" varStatus="st">
-                                    <tr>
-                                        <td class="text-muted">${st.index + 1}</td>
-                                        <td><code>${b.isbn}</code></td>
-                                        <td class="fw-semibold">${b.title}</td>
-                                        <td>${not empty b.authors ? b.authors : '—'}</td>
-                                        <td><span class="badge bg-secondary bg-opacity-10 text-dark">${b.categoryName}</span></td>
-                                        <td>${b.publisherName}</td>
-                                        <td>${b.publicationYear}</td>
-                                        <td class="text-center">${b.totalQuantity}</td>
-                                        <td class="text-center">
-                                            <span class="badge rounded-pill px-3 py-1
-                                                  ${b.availableQuantity > 0 ? 'badge-avail' : 'badge-noavail'}">
-                                                ${b.availableQuantity}
-                                            </span>
-                                        </td>
-                                        <td class="text-center" style="white-space:nowrap">
-                                            <a href="books?action=edit&isbn=${b.isbn}"
-                                               class="btn btn-sm btn-outline-primary me-1" title="Sửa">
-                                                <i class="bi bi-pencil-fill"></i>
-                                            </a>
-                                            <a href="books?action=delete&isbn=${b.isbn}"
-                                               class="btn btn-sm btn-outline-danger" title="Xóa"
-                                               onclick="return confirm('Xóa sách «${b.title}»?')">
-                                                <i class="bi bi-trash-fill"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">ISBN</label>
+                            <c:choose>
+                                <c:when test="${not empty book}">
+                                    <%-- Khi edit: hiển thị ISBN, readonly --%>
+                                    <input type="text" name="isbn" class="form-control"
+                                           value="${book.isbn}" readonly>
+                                </c:when>
+                                <c:otherwise>
+                                    <%-- Khi thêm mới: auto-generate, người dùng vẫn có thể sửa --%>
+                                    <div class="input-group">
+                                        <input type="text" name="isbn" id="isbnField"
+                                               class="form-control" required maxlength="20"
+                                               placeholder="978-xxx-xxx-xxx-x">
+                                        <button type="button" class="btn btn-outline-secondary"
+                                                onclick="generateISBN()" title="Tạo ISBN mới">
+                                            <i class="bi bi-arrow-clockwise"></i>
+                                        </button>
+                                    </div>
+                                    <small class="text-muted">Tự động tạo, hoặc nhấn 🔄 để tạo lại.</small>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Năm Xuất Bản</label>
+                            <input type="number" name="publicationYear" class="form-control"
+                                   min="1000" max="2099" placeholder="VD: 2023"
+                                   value="${not empty book ? book.publicationYear : ''}">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Tên Sách <span class="text-danger">*</span></label>
+                        <input type="text" name="title" class="form-control" required maxlength="300"
+                               placeholder="Nhập tên sách…"
+                               value="${not empty book ? book.title : ''}">
+                        <div class="invalid-feedback">Vui lòng nhập tên sách.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Ngôn Ngữ</label>
+                        <select name="language" class="form-select">
+                            <c:set var="lang" value="${not empty book ? book.language : 'Tiếng Việt'}"/>
+                            <option value="Tiếng Việt" ${lang == 'Tiếng Việt' ? 'selected' : ''}>Tiếng Việt</option>
+                            <option value="Tiếng Anh"  ${lang == 'Tiếng Anh'  ? 'selected' : ''}>Tiếng Anh</option>
+                            <option value="Tiếng Nhật" ${lang == 'Tiếng Nhật' ? 'selected' : ''}>Tiếng Nhật</option>
+                            <option value="Tiếng Pháp" ${lang == 'Tiếng Pháp' ? 'selected' : ''}>Tiếng Pháp</option>
+                            <option value="Khác"       ${lang == 'Khác'       ? 'selected' : ''}>Khác</option>
+                        </select>
+                    </div>
+
+                    <%-- ── Phân loại ── --%>
+                    <p class="section-label mt-4">Phân Loại & Nhà Xuất Bản</p>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Thể Loại</label>
+                            <select name="categoryID" class="form-select">
+                                <option value="">-- Chọn thể loại --</option>
+                                <c:forEach var="cat" items="${categories}">
+                                    <option value="${cat[0]}"
+                                            ${not empty book && book.categoryID == cat[0] ? 'selected' : ''}>
+                                        ${cat[1]}
+                                    </option>
                                 </c:forEach>
-                            </c:otherwise>
-                        </c:choose>
-                    </tbody>
-                </table>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Nhà Xuất Bản</label>
+                            <select name="publisherID" class="form-select">
+                                <option value="">-- Chọn NXB --</option>
+                                <c:forEach var="pub" items="${publishers}">
+                                    <option value="${pub[0]}"
+                                            ${not empty book && book.publisherID == pub[0] ? 'selected' : ''}>
+                                        ${pub[1]}
+                                    </option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div>
+
+                    <%-- ── Số lượng ── --%>
+                    <div class="mb-3">
+                        <label class="form-label">Tác Giả</label>
+                        <input type="text" name="authorName" class="form-control"
+                               placeholder="Nhập tên tác giả…"
+                               value="${not empty book ? book.authors : ''}">
+                        <small class="text-muted">Nhập tên tác giả, nhiều tác giả cách nhau bằng dấu phẩy.</small>
+                    </div>
+
+                    <p class="section-label mt-4">Số Lượng</p>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Tổng Số Lượng <span class="text-danger">*</span></label>
+                            <input type="number" name="totalQuantity" id="totalQty"
+                                   class="form-control" min="0" required placeholder="0"
+                                   value="${not empty book ? book.totalQuantity : ''}">
+                            <div class="invalid-feedback">Vui lòng nhập số lượng.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Số Lượng Còn Lại</label>
+                            <input type="number" name="availableQuantity" id="availQty"
+                                   class="form-control" min="0" placeholder="0"
+                                   value="${not empty book ? book.availableQuantity : ''}">
+                            <small class="text-muted">Không được vượt quá Tổng số lượng.</small>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-floppy-fill me-2"></i>
+                            ${empty book ? 'Thêm Sách' : 'Lưu Thay Đổi'}
+                        </button>
+                        <a href="books" class="btn btn-outline-secondary px-4">
+                            <i class="bi bi-arrow-left me-1"></i>Quay Lại
+                        </a>
+                    </div>
+                </form>
             </div>
-            <p class="text-muted mt-2 small">Tổng cộng: <strong>${books.size()}</strong> sách</p>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+                                                    // ── Auto-generate ISBN với prefix 978- ──────────────────────────────────
+                                                    function generateISBN() {
+                                                        let digits = '978';
+                                                        for (let i = 0; i < 9; i++) {
+                                                            digits += Math.floor(Math.random() * 10);
+                                                        }
+                                                        // Tính check digit
+                                                        let sum = 0;
+                                                        for (let i = 0; i < 12; i++) {
+                                                            sum += parseInt(digits[i]) * (i % 2 === 0 ? 1 : 3);
+                                                        }
+                                                        const check = (10 - (sum % 10)) % 10;
+                                                        const full = digits + check;
+                                                        // Format 978-XXX-XXXXX-X
+                                                        document.getElementById('isbnField').value =
+                                                                full.slice(0, 3) + '-' + full.slice(3, 6) + '-' + full.slice(6, 12) + '-' + full.slice(12);
+                                                    }
+                                                    window.onload = function () {
+                                                        const f = document.getElementById('isbnField');
+                                                        if (f)
+                                                            generateISBN();
+                                                    };
+
+                                                    // availableQty không được vượt totalQty
+                                                    document.getElementById('totalQty').addEventListener('input', function () {
+                                                        const avail = document.getElementById('availQty');
+                                                        if (parseInt(avail.value) > parseInt(this.value))
+                                                            avail.value = this.value;
+                                                    });
+        </script>
     </body>
 </html>
 

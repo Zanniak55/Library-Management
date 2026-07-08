@@ -62,12 +62,27 @@
 
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">ISBN <span class="text-danger">*</span></label>
-                            <input type="text" name="isbn" class="form-control" required maxlength="20"
-                                   placeholder="978-xxx-xxx-xxx-x"
-                                   value="${not empty book ? book.isbn : ''}"
-                                   ${not empty book ? 'readonly' : ''}>
-                            <div class="invalid-feedback">Vui lòng nhập ISBN.</div>
+                            <label class="form-label">ISBN</label>
+                            <c:choose>
+                                <c:when test="${not empty book}">
+                                    <%-- Khi edit: hiển thị ISBN, readonly --%>
+                                    <input type="text" name="isbn" class="form-control"
+                                           value="${book.isbn}" readonly>
+                                </c:when>
+                                <c:otherwise>
+                                    <%-- Khi thêm mới: auto-generate, người dùng vẫn có thể sửa --%>
+                                    <div class="input-group">
+                                        <input type="text" name="isbn" id="isbnField"
+                                               class="form-control" required maxlength="20"
+                                               placeholder="978-xxx-xxx-xxx-x">
+                                        <button type="button" class="btn btn-outline-secondary"
+                                                onclick="generateISBN()" title="Tạo ISBN mới">
+                                            <i class="bi bi-arrow-clockwise"></i>
+                                        </button>
+                                    </div>
+                                    <small class="text-muted">Tự động tạo, hoặc nhấn 🔄 để tạo lại.</small>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Năm Xuất Bản</label>
@@ -128,6 +143,14 @@
                     </div>
 
                     <%-- ── Số lượng ── --%>
+                    <div class="mb-3">
+                        <label class="form-label">Tác Giả</label>
+                        <input type="text" name="authorName" class="form-control"
+                               placeholder="Nhập tên tác giả…"
+                               value="${not empty book ? book.authors : ''}">
+                        <small class="text-muted">Nhập tên tác giả, nhiều tác giả cách nhau bằng dấu phẩy.</small>
+                    </div>
+
                     <p class="section-label mt-4">Số Lượng</p>
 
                     <div class="row g-3 mb-4">
@@ -161,19 +184,35 @@
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-            document.getElementById('bookForm').addEventListener('submit', function (e) {
-                if (!this.checkValidity()) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-                this.classList.add('was-validated');
-            });
-            // availableQty không được vượt totalQty
-            document.getElementById('totalQty').addEventListener('input', function () {
-                const avail = document.getElementById('availQty');
-                if (parseInt(avail.value) > parseInt(this.value))
-                    avail.value = this.value;
-            });
+                                                    // ── Auto-generate ISBN với prefix 978- ──────────────────────────────────
+                                                    function generateISBN() {
+                                                        let digits = '978';
+                                                        for (let i = 0; i < 9; i++) {
+                                                            digits += Math.floor(Math.random() * 10);
+                                                        }
+                                                        // Tính check digit
+                                                        let sum = 0;
+                                                        for (let i = 0; i < 12; i++) {
+                                                            sum += parseInt(digits[i]) * (i % 2 === 0 ? 1 : 3);
+                                                        }
+                                                        const check = (10 - (sum % 10)) % 10;
+                                                        const full = digits + check;
+                                                        // Format 978-XXX-XXXXX-X
+                                                        document.getElementById('isbnField').value =
+                                                                full.slice(0, 3) + '-' + full.slice(3, 6) + '-' + full.slice(6, 12) + '-' + full.slice(12);
+                                                    }
+                                                    window.onload = function () {
+                                                        const f = document.getElementById('isbnField');
+                                                        if (f)
+                                                            generateISBN();
+                                                    };
+
+                                                    // availableQty không được vượt totalQty
+                                                    document.getElementById('totalQty').addEventListener('input', function () {
+                                                        const avail = document.getElementById('availQty');
+                                                        if (parseInt(avail.value) > parseInt(this.value))
+                                                            avail.value = this.value;
+                                                    });
         </script>
     </body>
 </html>

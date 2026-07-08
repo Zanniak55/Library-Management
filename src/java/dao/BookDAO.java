@@ -111,14 +111,35 @@ public class BookDAO extends DBContext {
 
     // ─── Thêm sách ───────────────────────────────────────────────────────────
     public boolean addBook(Book book) {
-        String sql = """
-            INSERT INTO Book (ISBN, Title, Language, PublicationYear,
-                              TotalQuantity, AvailableQuantity, PublisherID, CategoryID)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """;
+        String sql
+                = "INSERT INTO Book (ISBN, Title, Language, PublicationYear, "
+                + "                  TotalQuantity, AvailableQuantity, PublisherID, CategoryID) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            setParams(ps, book);
-            return ps.executeUpdate() > 0;
+            ps.setString(1, book.getIsbn());
+            ps.setNString(2, book.getTitle());
+            ps.setNString(3, book.getLanguage());
+            ps.setInt(4, book.getPublicationYear());
+            ps.setInt(5, book.getTotalQuantity());
+            ps.setInt(6, book.getAvailableQuantity());
+            if (book.getPublisherID() > 0) {
+                ps.setInt(7, book.getPublisherID());
+            } else {
+                ps.setNull(7, java.sql.Types.INTEGER);
+            }
+            if (book.getCategoryID() > 0) {
+                ps.setInt(8, book.getCategoryID());
+            } else {
+                ps.setNull(8, java.sql.Types.INTEGER);
+            }
+
+            boolean ok = ps.executeUpdate() > 0;
+            // Lưu tác giả vào Book_Author
+            if (ok && book.getAuthorID() > 0) {
+                addBookAuthor(book.getIsbn(), book.getAuthorID());
+            }
+            return ok;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -232,5 +253,63 @@ public class BookDAO extends DBContext {
         ps.setInt(6, book.getAvailableQuantity());
         ps.setInt(7, book.getPublisherID());
         ps.setInt(8, book.getCategoryID());
+    }
+
+    // ─── Lấy danh sách Author cho dropdown ───────────────────────────────────
+    public List<String[]> getAllAuthors() {
+        List<String[]> list = new ArrayList<>();
+        String sql = "SELECT AuthorID, FullName FROM Author ORDER BY FullName";
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(new String[]{rs.getString("AuthorID"), rs.getString("FullName")});
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    // Tìm AuthorID theo tên, nếu chưa có thì tạo mới
+    public int getOrCreateAuthor(String fullName) {
+        // Tìm trước
+        String selectSql = "SELECT AuthorID FROM Author WHERE FullName = ?";
+        try (PreparedStatement ps = connection.prepareStatement(selectSql)) {
+            ps.setNString(1, fullName.trim());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("AuthorID"); // đã có → trả về ID
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Chưa có → tạo mới
+        String insertSql = "INSERT INTO Author (FullName) VALUES (?)";
+        try (PreparedStatement ps = connection.prepareStatement(insertSql,
+                Statement.RETURN_GENERATED_KEYS)) {
+            ps.setNString(1, fullName.trim());
+            ps.executeUpdate();
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (keys.next()) {
+                    return keys.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    // Thêm vào bảng Book_Author
+    private void addBookAuthor(String isbn, int authorID) {
+        String sql = "INSERT INTO Book_Author (ISBN, AuthorID) VALUES (?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, isbn);
+            ps.setInt(2, authorID);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

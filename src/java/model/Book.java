@@ -19,15 +19,14 @@ public class Book {
     private int publisherID;
     private int categoryID;
 
-    // ── Field JOIN để hiển thị (không lưu DB) ────────────────────────────────
-    private String authors;        // từ bảng Author (STRING_AGG)
-    private String categoryName;   // từ bảng Category
-    private String publisherName;  // từ bảng Publisher
+    private String authors;        
+    private String categoryName;
+    private String publisherName;
+    private int authorID;
 
     public Book() {
     }
 
-    // Getters & Setters
     public String getIsbn() {
         return isbn;
     }
@@ -114,5 +113,13 @@ public class Book {
 
     public void setPublisherName(String publisherName) {
         this.publisherName = publisherName;
+    }
+
+    public int getAuthorID() {
+        return authorID;
+    }
+
+    public void setAuthorID(int authorID) {
+        this.authorID = authorID;
     }
 }
