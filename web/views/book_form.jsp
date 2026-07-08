@@ -207,6 +207,15 @@
                                                             generateISBN();
                                                     };
 
+                                                    // ── Validation ──────────────────────────────────────────────────────────
+                                                    document.getElementById('bookForm').addEventListener('submit', function (e) {
+                                                        if (!this.checkValidity()) {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                        }
+                                                        this.classList.add('was-validated');
+                                                    });
+
                                                     // availableQty không được vượt totalQty
                                                     document.getElementById('totalQty').addEventListener('input', function () {
                                                         const avail = document.getElementById('availQty');
