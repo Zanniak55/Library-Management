@@ -112,6 +112,14 @@ public class BookServlet extends HttpServlet {
                 request.getRequestDispatcher("/views/book_list.jsp").forward(request, response);
                 break;
 
+            // ── Kiểm tra tên sách realtime từ JS fetch ───────────────────────
+            case "checkTitle":
+                String checkTitle = request.getParameter("title");
+                boolean titleExisted = bookDAO.isBookExist(checkTitle);
+                response.setContentType("text/plain;charset=UTF-8");
+                response.getWriter().write(titleExisted ? "existed" : "ok");
+                return;
+
             default: // list
                 request.setAttribute("books", bookDAO.getAllBooks());
                 request.getRequestDispatcher("/views/book_list.jsp").forward(request, response);
@@ -164,11 +172,14 @@ public class BookServlet extends HttpServlet {
             ok = bookDAO.updateBook(book);
             msg = ok ? "Cập nhật sách thành công." : "Cập nhật sách thất bại.";
         } else {
-            // ── Kiểm tra tên sách đã tồn tại chưa ───────────────────────────
+            // ── Kiểm tra trùng tên (server-side backup) ──────────────────────
             if (bookDAO.isBookExist(book.getTitle())) {
                 request.getSession().setAttribute("error",
                         "Sách «" + book.getTitle() + "» đã có trong danh sách!");
-                response.sendRedirect("books?action=new");
+                request.setAttribute("formTitle", "Thêm Sách Mới");
+                request.setAttribute("categories", bookDAO.getAllCategories());
+                request.setAttribute("publishers", bookDAO.getAllPublishers());
+                request.getRequestDispatcher("/views/book_form.jsp").forward(request, response);
                 return;
             }
             ok = bookDAO.addBook(book);

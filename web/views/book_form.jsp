@@ -52,12 +52,27 @@
                 </h4>
             </div>
             <div class="form-body">
+
+                <%-- ── Thông báo lỗi / thành công hiện ngay trong form ── --%>
+                <c:if test="${not empty sessionScope.error}">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-circle-fill me-2"></i>${sessionScope.error}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <c:remove var="error" scope="session"/>
+                </c:if>
+                <c:if test="${not empty sessionScope.success}">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>${sessionScope.success}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <c:remove var="success" scope="session"/>
+                </c:if>
+
                 <form action="books" method="post" id="bookForm" novalidate>
 
-                    <%-- actionType: phân biệt thêm / sửa --%>
                     <input type="hidden" name="actionType" value="${empty book ? 'add' : 'edit'}">
 
-                    <%-- ── Thông tin cơ bản ── --%>
                     <p class="section-label">Thông Tin Cơ Bản</p>
 
                     <div class="row g-3 mb-3">
@@ -65,12 +80,10 @@
                             <label class="form-label">ISBN</label>
                             <c:choose>
                                 <c:when test="${not empty book}">
-                                    <%-- Khi edit: hiển thị ISBN, readonly --%>
                                     <input type="text" name="isbn" class="form-control"
                                            value="${book.isbn}" readonly>
                                 </c:when>
                                 <c:otherwise>
-                                    <%-- Khi thêm mới: auto-generate, người dùng vẫn có thể sửa --%>
                                     <div class="input-group">
                                         <input type="text" name="isbn" id="isbnField"
                                                class="form-control" required maxlength="20"
@@ -94,9 +107,11 @@
 
                     <div class="mb-3">
                         <label class="form-label">Tên Sách <span class="text-danger">*</span></label>
-                        <input type="text" name="title" class="form-control" required maxlength="300"
+                        <input type="text" name="title" id="titleField"
+                               class="form-control" required maxlength="300"
                                placeholder="Nhập tên sách…"
                                value="${not empty book ? book.title : ''}">
+                        <div id="titleFeedback" class="small mt-1"></div>
                         <div class="invalid-feedback">Vui lòng nhập tên sách.</div>
                     </div>
 
@@ -112,7 +127,6 @@
                         </select>
                     </div>
 
-                    <%-- ── Phân loại ── --%>
                     <p class="section-label mt-4">Phân Loại & Nhà Xuất Bản</p>
 
                     <div class="row g-3 mb-3">
@@ -122,7 +136,7 @@
                                 <option value="">-- Chọn thể loại --</option>
                                 <c:forEach var="cat" items="${categories}">
                                     <option value="${cat[0]}"
-                                            ${not empty book && book.categoryID == cat[0] ? 'selected' : ''}>
+                                            <c:if test="${not empty book and book.categoryID == cat[0]}">selected</c:if>>
                                         ${cat[1]}
                                     </option>
                                 </c:forEach>
@@ -134,7 +148,7 @@
                                 <option value="">-- Chọn NXB --</option>
                                 <c:forEach var="pub" items="${publishers}">
                                     <option value="${pub[0]}"
-                                            ${not empty book && book.publisherID == pub[0] ? 'selected' : ''}>
+                                            <c:if test="${not empty book and book.publisherID == pub[0]}">selected</c:if>>
                                         ${pub[1]}
                                     </option>
                                 </c:forEach>
@@ -142,13 +156,12 @@
                         </div>
                     </div>
 
-                    <%-- ── Số lượng ── --%>
                     <div class="mb-3">
                         <label class="form-label">Tác Giả</label>
                         <input type="text" name="authorName" class="form-control"
                                placeholder="Nhập tên tác giả…"
                                value="${not empty book ? book.authors : ''}">
-                        <small class="text-muted">Nhập tên tác giả, nhiều tác giả cách nhau bằng dấu phẩy.</small>
+                        <small class="text-muted">Nhiều tác giả cách nhau bằng dấu phẩy.</small>
                     </div>
 
                     <p class="section-label mt-4">Số Lượng</p>
@@ -171,7 +184,7 @@
                     </div>
 
                     <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary px-4">
+                        <button type="submit" id="submitBtn" class="btn btn-primary px-4">
                             <i class="bi bi-floppy-fill me-2"></i>
                             ${empty book ? 'Thêm Sách' : 'Lưu Thay Đổi'}
                         </button>
@@ -182,22 +195,19 @@
                 </form>
             </div>
         </div>
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-                                                    // ── Auto-generate ISBN với prefix 978- ──────────────────────────────────
+                                                    // ── Auto-generate ISBN ───────────────────────────────────────────
                                                     function generateISBN() {
                                                         let digits = '978';
-                                                        for (let i = 0; i < 9; i++) {
+                                                        for (let i = 0; i < 9; i++)
                                                             digits += Math.floor(Math.random() * 10);
-                                                        }
-                                                        // Tính check digit
                                                         let sum = 0;
-                                                        for (let i = 0; i < 12; i++) {
+                                                        for (let i = 0; i < 12; i++)
                                                             sum += parseInt(digits[i]) * (i % 2 === 0 ? 1 : 3);
-                                                        }
                                                         const check = (10 - (sum % 10)) % 10;
                                                         const full = digits + check;
-                                                        // Format 978-XXX-XXXXX-X
                                                         document.getElementById('isbnField').value =
                                                                 full.slice(0, 3) + '-' + full.slice(3, 6) + '-' + full.slice(6, 12) + '-' + full.slice(12);
                                                     }
@@ -207,7 +217,37 @@
                                                             generateISBN();
                                                     };
 
-                                                    // ── Validation ──────────────────────────────────────────────────────────
+                                                    // ── Check trùng tên sách realtime khi rời ô nhập ────────────────
+                                                    const titleField = document.getElementById('titleField');
+                                                    const submitBtn = document.getElementById('submitBtn');
+                                                    const titleFeedback = document.getElementById('titleFeedback');
+
+                                                    if (titleField) {
+                                                        titleField.addEventListener('blur', function () {
+                                                            const title = this.value.trim();
+                                                            if (!title)
+                                                                return;
+
+                                                            fetch('books?action=checkTitle&title=' + encodeURIComponent(title))
+                                                                    .then(r => r.text())
+                                                                    .then(result => {
+                                                                        if (result === 'existed') {
+                                                                            titleFeedback.innerHTML = '<span class="text-danger"><i class="bi bi-exclamation-circle-fill me-1"></i>Sách «' + title + '» đã có trong danh sách!</span>';
+                                                                            submitBtn.disabled = true;
+                                                                        } else {
+                                                                            titleFeedback.innerHTML = '<span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>Tên sách hợp lệ</span>';
+                                                                            submitBtn.disabled = false;
+                                                                        }
+                                                                    });
+                                                        });
+
+                                                        titleField.addEventListener('input', function () {
+                                                            titleFeedback.innerHTML = '';
+                                                            submitBtn.disabled = false;
+                                                        });
+                                                    }
+
+                                                    // ── Validation ──────────────────────────────────────────────────
                                                     document.getElementById('bookForm').addEventListener('submit', function (e) {
                                                         if (!this.checkValidity()) {
                                                             e.preventDefault();
@@ -216,7 +256,6 @@
                                                         this.classList.add('was-validated');
                                                     });
 
-                                                    // availableQty không được vượt totalQty
                                                     document.getElementById('totalQty').addEventListener('input', function () {
                                                         const avail = document.getElementById('availQty');
                                                         if (parseInt(avail.value) > parseInt(this.value))
