@@ -150,6 +150,13 @@ public class BookServlet extends HttpServlet {
         book.setPublisherID(parseIntSafe(request.getParameter("publisherID"), 0));
         book.setCategoryID(parseIntSafe(request.getParameter("categoryID"), 0));
 
+        // ── Xử lý tác giả: gõ tên → tìm hoặc tạo mới ───────────────────────
+        String authorName = request.getParameter("authorName");
+        if (authorName != null && !authorName.trim().isEmpty()) {
+            int authorID = bookDAO.getOrCreateAuthor(authorName.trim());
+            book.setAuthorID(authorID);
+        }
+
         boolean ok;
         String msg;
 
@@ -157,6 +164,13 @@ public class BookServlet extends HttpServlet {
             ok = bookDAO.updateBook(book);
             msg = ok ? "Cập nhật sách thành công." : "Cập nhật sách thất bại.";
         } else {
+            // ── Kiểm tra tên sách đã tồn tại chưa ───────────────────────────
+            if (bookDAO.isBookExist(book.getTitle())) {
+                request.getSession().setAttribute("error",
+                        "Sách «" + book.getTitle() + "» đã có trong danh sách!");
+                response.sendRedirect("books?action=new");
+                return;
+            }
             ok = bookDAO.addBook(book);
             msg = ok ? "Thêm sách thành công." : "Thêm sách thất bại.";
         }

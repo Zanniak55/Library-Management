@@ -312,4 +312,20 @@ public class BookDAO extends DBContext {
             e.printStackTrace();
         }
     }
+
+    // Kiểm tra tên sách đã tồn tại chưa
+    public boolean isBookExist(String title) {
+        String sql = "SELECT COUNT(*) FROM Book WHERE Title = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setNString(1, title.trim());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
