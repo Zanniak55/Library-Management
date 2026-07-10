@@ -17,7 +17,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>TransactionServlet</servlet-name>
-        <url-pattern>/loans</url-pattern>
+        <url-pattern>/loan</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>LoginServlet</servlet-name>
