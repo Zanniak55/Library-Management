@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import model.Book;
+import dao.BookcopyDAO;
 
 /**
  *
@@ -184,6 +185,16 @@ public class BookServlet extends HttpServlet {
             }
             ok = bookDAO.addBook(book);
             msg = ok ? "Thêm sách thành công." : "Thêm sách thất bại.";
+
+            // ── Tự động tạo bản sao ──────────────────────────────────────
+            if (ok && book.getTotalQuantity() > 0) {
+                BookcopyDAO copyDAO = new BookcopyDAO();
+                copyDAO.autoCreateCopies(
+                        book.getIsbn(),
+                        book.getTotalQuantity(),
+                        "" // shelfLocation để trống, cập nhật sau
+                );
+            }
         }
 
         request.getSession().setAttribute(ok ? "success" : "error", msg);
