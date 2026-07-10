@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import model.Staff;
 import java.io.IOException;
 import java.util.List;
-@WebServlet(name = "StaffServlet", urlPatterns = {"/StaffServlet"})
+@WebServlet(name = "StaffServlet", urlPatterns = {"/staffs"})
 public class StaffServlet extends HttpServlet {
     private final StaffDAO dao = new StaffDAO();
     @Override

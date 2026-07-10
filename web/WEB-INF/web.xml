@@ -41,7 +41,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>StaffServlet</servlet-name>
-        <url-pattern>/StaffServlet</url-pattern>
+        <url-pattern>/staffs</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>DashboardServlet</servlet-name>
