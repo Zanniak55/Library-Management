@@ -7,7 +7,7 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import model.Staff;
 
-@WebServlet(name = "FineServlet", urlPatterns = {"/fines"})
+@WebServlet(name = "FineServlet", urlPatterns = {"/fine"})
 public class FineServlet extends HttpServlet {
 
     @Override
