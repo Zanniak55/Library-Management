@@ -1,4 +1,4 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.util.List, model.Staff"%>
 <!DOCTYPE html>
 <html>
@@ -85,16 +85,16 @@
         <a href="<%= ctx %>/dashboard">🏠 Dashboard</a>
         <div class="section-title">Quản lý</div>
         <a href="<%= ctx %>/loan?action=list">📋 Mượn / Trả sách</a>
-        <a href="<%= ctx %>/fine?action=list">💰 Quản lý phạt</a>
-        <a href="<%= ctx %>/fine?action=stats" class="active">📊 Thống kê phạt</a>
-        <a href="<%= ctx %>/MemberServlet">👥 Thành viên</a>
+        <a href="<%= ctx %>/fines?action=list">💰 Quản lý phạt</a>
+        <a href="<%= ctx %>/fines?action=stats" class="active">📊 Thống kê phạt</a>
+        <a href="<%= ctx %>/members">👥 Thành viên</a>
         <a href="#">📖 Sách</a>
         <a href="#">📦 Bản sao sách</a>
         <a href="#">🏷️ Thể loại</a>
         <a href="#">✍️ Tác giả</a>
         <a href="#">🏢 Nhà xuất bản</a>
         <div class="section-title">Hệ thống</div>
-        <a href="<%= ctx %>/StaffServlet">👤 Quản lý nhân sự</a>
+        <a href="<%= ctx %>/staffs">👤 Quản lý nhân sự</a>
         <a href="<%= ctx %>/loan?action=logout">🚪 Đăng xuất</a>
     </div>
 </div>

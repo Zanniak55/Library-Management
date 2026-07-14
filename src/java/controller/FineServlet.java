@@ -50,9 +50,9 @@ public class FineServlet extends HttpServlet {
                 int id = Integer.parseInt(request.getParameter("id"));
                 boolean ok = dao.markPaid(id);
                 response.sendRedirect(request.getContextPath()
-                        + "/fine?action=list&msg=" + (ok ? "paid" : "error"));
+                        + "/fines?action=list&msg=" + (ok ? "paid" : "error"));
             }
-            default -> response.sendRedirect(request.getContextPath() + "/fine");
+            default -> response.sendRedirect(request.getContextPath() + "/fines");
         }
     }
 
@@ -74,9 +74,9 @@ public class FineServlet extends HttpServlet {
             FineDAO dao = new FineDAO();
             boolean ok = dao.createFine(transactionID, reason, amount);
             response.sendRedirect(request.getContextPath()
-                    + "/fine?action=list&msg=" + (ok ? "added" : "error"));
+                    + "/fines?action=list&msg=" + (ok ? "added" : "error"));
         } else {
-            response.sendRedirect(request.getContextPath() + "/fine");
+            response.sendRedirect(request.getContextPath() + "/fines");
         }
     }
 }

@@ -1,24 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
-    <servlet-mapping>
-        <servlet-name>BookServlet</servlet-name>
-        <url-pattern>/books</url-pattern>
-    </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
-    <servlet>
-        <servlet-name>TransactionServlet</servlet-name>
-        <servlet-class>controller.TransactionServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>BookServlet</servlet-name>
-        <servlet-class>controller.BookServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>TransactionServlet</servlet-name>
-        <url-pattern>/loan</url-pattern>
-    </servlet-mapping>
+
     <servlet>
         <servlet-name>LoginServlet</servlet-name>
         <servlet-class>controller.LoginServlet</servlet-class>
@@ -27,6 +12,34 @@
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/login</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DashboardServlet</servlet-name>
+        <servlet-class>controller.DashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DashboardServlet</servlet-name>
+        <url-pattern>/dashboard</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>BookServlet</servlet-name>
+        <servlet-class>controller.BookServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BookServlet</servlet-name>
+        <url-pattern>/books</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>BookcopyServlet</servlet-name>
+        <servlet-class>controller.BookcopyServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BookcopyServlet</servlet-name>
+        <url-pattern>/bookcopies</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>MemberServlet</servlet-name>
         <servlet-class>controller.MemberServlet</servlet-class>
@@ -35,6 +48,7 @@
         <servlet-name>MemberServlet</servlet-name>
         <url-pattern>/members</url-pattern>
     </servlet-mapping>
+
     <servlet>
         <servlet-name>StaffServlet</servlet-name>
         <servlet-class>controller.StaffServlet</servlet-class>
@@ -43,12 +57,22 @@
         <servlet-name>StaffServlet</servlet-name>
         <url-pattern>/staffs</url-pattern>
     </servlet-mapping>
+
     <servlet>
-        <servlet-name>DashboardServlet</servlet-name>
-        <servlet-class>controller.DashboardServlet</servlet-class>
+        <servlet-name>TransactionServlet</servlet-name>
+        <servlet-class>controller.TransactionServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>DashboardServlet</servlet-name>
-        <url-pattern>/dashboard</url-pattern>
+        <servlet-name>TransactionServlet</servlet-name>
+        <url-pattern>/loan</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>FineServlet</servlet-name>
+        <servlet-class>controller.FineServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FineServlet</servlet-name>
+        <url-pattern>/fines</url-pattern>
     </servlet-mapping>
 </web-app>

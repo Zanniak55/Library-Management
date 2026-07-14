@@ -71,7 +71,7 @@
         <a href="dashboard" class="btn-back" id="btnBackDashboard">
             <i class="bi bi-arrow-left"></i> Về Dashboard
         </a>
-        <a href="StaffServlet?action=add" class="btn-add" id="btnAddStaff">
+        <a href="<%= request.getContextPath() %>/staffs?action=add" class="btn-add" id="btnAddStaff">
             <i class="bi bi-person-plus-fill"></i> Thêm nhân viên
         </a>
     </div>
@@ -104,7 +104,7 @@
                                     </span>
                                 </td>
                                 <td style="text-align:center; white-space:nowrap;">
-                                    <a href="StaffServlet?action=edit&id=${s.staffID}"
+                                    <a href="<%= request.getContextPath() %>/staffs?action=edit&id=${s.staffID}"
                                        class="btn-action btn-edit"
                                        id="btnEditStaff-${s.staffID}">
                                         <i class="bi bi-pencil-fill"></i> Sửa

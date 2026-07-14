@@ -113,17 +113,13 @@
 
             <div class="section-title">Quản lý</div>
             <a href="<%= ctx %>/loan?action=list">📋 Mượn / Trả sách</a>
-            <a href="<%= ctx %>/fine?action=list">💰 Quản lý phạt</a>
-            <a href="<%= ctx %>/fine?action=stats">📊 Thống kê phạt</a>
-            <a href="<%= ctx %>/MemberServlet" class="active">👥 Thành viên</a>
-            <a href="#">📖 Sách</a>
-            <a href="#">📦 Bản sao sách</a>
-            <a href="#">🏷️ Thể loại</a>
-            <a href="#">✍️ Tác giả</a>
-            <a href="#">🏢 Nhà xuất bản</a>
+            <a href="<%= ctx %>/fines?action=list">💰 Quản lý phạt</a>
+            <a href="<%= ctx %>/members" class="active">👥 Thành viên</a>
+            <a href="<%= ctx %>/books">📖 Sách</a>
+            <a href="<%= ctx %>/bookcopies">📦 Bản sao sách</a>
 
             <div class="section-title">Hệ thống</div>
-            <a href="<%= ctx %>/StaffServlet">👤 Quản lý nhân sự</a>
+            <a href="<%= ctx %>/staffs">👤 Quản lý nhân sự</a>
             <a href="<%= ctx %>/loan?action=logout">🚪 Đăng xuất</a>
         </div>
     </div>
@@ -154,7 +150,7 @@
             <!-- TOOLBAR -->
             <div class="toolbar">
                 <div class="toolbar-left">
-                    <form method="get" action="MemberServlet" class="search-group">
+                    <form method="get" action="<%= ctx %>/members" class="search-group">
                         <input type="hidden" name="action" value="search">
                         <input type="text" name="keyword" class="search-input"
                                placeholder="Tìm tên, email, username..."
@@ -162,10 +158,10 @@
                         <button type="submit" class="search-btn">🔍 Tìm</button>
                     </form>
                     <c:if test="${action == 'search'}">
-                        <a href="MemberServlet" style="font-size:13px;color:#4a90d9;text-decoration:none;">✕ Xóa lọc</a>
+                        <a href="<%= ctx %>/members" style="font-size:13px;color:#4a90d9;text-decoration:none;">✕ Xóa lọc</a>
                     </c:if>
                 </div>
-                <a href="MemberServlet?action=add" class="btn-add">➕ Thêm thành viên</a>
+                <a href="<%= ctx %>/members?action=add" class="btn-add">➕ Thêm thành viên</a>
             </div>
 
             <!-- TABLE CARD -->
@@ -223,7 +219,7 @@
                                             </c:choose>
                                         </td>
                                         <td style="text-align:center;white-space:nowrap;">
-                                            <a href="MemberServlet?action=edit&id=${m.memberID}" class="btn-edit">✏️ Sửa</a>
+                                            <a href="<%= ctx %>/members?action=edit&id=${m.memberID}" class="btn-edit">✏️ Sửa</a>
                                             &nbsp;
                                             <a href="#" class="btn-delete"
                                                onclick="confirmDelete(${m.memberID}, '${m.fullName}'); return false;">🗑️ Xóa</a>
@@ -271,7 +267,7 @@
         function confirmDelete(id, name) {
             document.getElementById('deleteModalText').textContent =
                 'Xóa thành viên "' + name + '"? Hành động này không thể hoàn tác!';
-            document.getElementById('deleteConfirmLink').href = 'MemberServlet?action=delete&id=' + id;
+            document.getElementById('deleteConfirmLink').href = '<%= ctx %>/members?action=delete&id=' + id;
             document.getElementById('deleteModal').classList.add('show');
         }
         function closeModal() {
