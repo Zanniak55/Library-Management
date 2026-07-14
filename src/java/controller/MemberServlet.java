@@ -108,7 +108,7 @@ public class MemberServlet extends HttpServlet {
             req.setAttribute("member", member);
             req.getRequestDispatcher("member_form.jsp").forward(req, resp);
         } catch (NumberFormatException e) {
-            resp.sendRedirect("MemberServlet?action=list");
+            resp.sendRedirect("members?action=list");
         }
     }
 
@@ -155,9 +155,6 @@ public class MemberServlet extends HttpServlet {
         listMembers(request, response);
     }
 
-    /**
-     * Đọc dữ liệu từ request form và tạo đối tượng Member.
-     */
     private Member buildMemberFromRequest(HttpServletRequest request) {
         Member m = new Member();
         m.setFullName(request.getParameter("fullName"));

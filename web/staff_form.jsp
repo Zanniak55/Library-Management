@@ -59,7 +59,7 @@
 <body>
 <div class="page-wrapper">
     <div class="breadcrumb-custom">
-        <a href="StaffServlet"><i class="bi bi-person-badge-fill"></i> Nhân sự</a>
+        <a href="staffs"><i class="bi bi-person-badge-fill"></i> Nhân sự</a>
         <i class="bi bi-chevron-right"></i>
         <span>${isEdit ? 'Chỉnh sửa' : 'Thêm mới'}</span>
     </div>
@@ -69,7 +69,7 @@
             <h4>${isEdit ? 'Chỉnh sửa nhân viên' : 'Thêm nhân viên mới'}</h4>
         </div>
         <div class="card-body-custom">
-            <form id="staffForm" method="post" action="StaffServlet" novalidate>
+            <form id="staffForm" method="post" action="staffs" novalidate>
                 <input type="hidden" name="action" value="${isEdit ? 'update' : 'insert'}">
                 <c:if test="${isEdit}">
                     <input type="hidden" name="staffID" value="${staff.staffID}">
@@ -128,7 +128,7 @@
                     <div class="field-error" id="err-password">Mật khẩu phải có ít nhất 6 ký tự.</div>
                 </div>
                 <div class="btn-row">
-                    <a href="StaffServlet" class="btn-cancel" id="btnCancel">
+                    <a href="staffs" class="btn-cancel" id="btnCancel">
                         <i class="bi bi-x-circle"></i> Hủy
                     </a>
                     <button type="submit" class="btn-submit" id="btnSubmit">
