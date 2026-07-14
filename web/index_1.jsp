@@ -280,7 +280,7 @@
     <h1>Quản lý Thư viện<br>Thông minh &amp; Hiệu quả</h1>
     <p>Theo dõi sách, quản lý thành viên và xử lý giao dịch mượn/trả một cách dễ dàng, chính xác và trực quan.</p>
     <div class="hero-btns">
-        <a href="MemberServlet" class="btn-hero-primary" id="heroMemberBtn">
+        <a href="<%= request.getContextPath() %>/members" class="btn-hero-primary" id="heroMemberBtn">
             <i class="bi bi-people-fill"></i> Quản lý Thành viên
         </a>
         <a href="BookServlet" class="btn-hero-secondary" id="heroBookBtn">
@@ -335,7 +335,7 @@
         <div class="feature-arrow">Xem danh sách <i class="bi bi-arrow-right"></i></div>
     </a>
 
-    <a href="MemberServlet" class="feature-card" id="featMember">
+    <a href="<%= request.getContextPath() %>/members" class="feature-card" id="featMember">
         <div class="feature-icon fi-member">
             <i class="bi bi-person-badge-fill" style="color:#fff;"></i>
         </div>

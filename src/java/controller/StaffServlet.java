@@ -72,7 +72,7 @@ public class StaffServlet extends HttpServlet {
             req.setAttribute("staff", staff);
             req.getRequestDispatcher("staff_form.jsp").forward(req, resp);
         } catch (NumberFormatException e) {
-            resp.sendRedirect("StaffServlet?action=list");
+            resp.sendRedirect("staffs?action=list");
         }
     }
     private void deleteStaff(HttpServletRequest req, HttpServletResponse resp)

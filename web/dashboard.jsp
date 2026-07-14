@@ -318,14 +318,10 @@
 
                 <div class="section-title">Quản lý</div>
                 <a href="<%= ctx %>/loan?action=list">📋 Mượn / Trả sách</a>
-                <a href="<%= ctx %>/fine?action=list">💰 Quản lý phạt</a>
-                <a href="<%= ctx %>/fine?action=stats">📊 Thống kê phạt</a>
+                <a href="<%= ctx %>/fines?action=list">💰 Quản lý phạt</a>
                 <a href="<%= ctx %>/members">👥 Thành viên</a>
                 <a href="<%= ctx %>/books">📖 Sách</a>
                 <a href="<%= ctx %>/bookcopies">📦 Bản sao sách</a>
-                <a href="<%= ctx %>/categories">🏷️ Thể loại</a>
-                <a href="<%= ctx %>/authors">✍️ Tác giả</a>
-                <a href="<%= ctx %>/publishers">🏢 Nhà xuất bản</a>
 
                 <div class="section-title">Hệ thống</div>
                 <a href="<%= ctx %>/staffs">👤 Quản lý nhân sự</a>

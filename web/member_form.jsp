@@ -96,17 +96,13 @@
 
             <div class="section-title">Quản lý</div>
             <a href="<%= ctx %>/loan?action=list">📋 Mượn / Trả sách</a>
-            <a href="<%= ctx %>/fine?action=list">💰 Quản lý phạt</a>
-            <a href="<%= ctx %>/fine?action=stats">📊 Thống kê phạt</a>
-            <a href="<%= ctx %>/MemberServlet" class="active">👥 Thành viên</a>
-            <a href="#">📖 Sách</a>
-            <a href="#">📦 Bản sao sách</a>
-            <a href="#">🏷️ Thể loại</a>
-            <a href="#">✍️ Tác giả</a>
-            <a href="#">🏢 Nhà xuất bản</a>
+            <a href="<%= ctx %>/fines?action=list">💰 Quản lý phạt</a>
+            <a href="<%= ctx %>/members" class="active">👥 Thành viên</a>
+            <a href="<%= ctx %>/books">📖 Sách</a>
+            <a href="<%= ctx %>/bookcopies">📦 Bản sao sách</a>
 
             <div class="section-title">Hệ thống</div>
-            <a href="<%= ctx %>/StaffServlet">👤 Quản lý nhân sự</a>
+            <a href="<%= ctx %>/staffs">👤 Quản lý nhân sự</a>
             <a href="<%= ctx %>/loan?action=logout">🚪 Đăng xuất</a>
         </div>
     </div>
@@ -129,7 +125,7 @@
             <!-- BREADCRUMB -->
             <div class="breadcrumb">
                 <a href="<%= ctx %>/dashboard">🏠 Dashboard</a> /
-                <a href="MemberServlet">👥 Thành viên</a> /
+                <a href="<%= ctx %>/members">👥 Thành viên</a> /
                 <span>${isEdit ? 'Chỉnh sửa' : 'Thêm mới'}</span>
             </div>
 
@@ -139,7 +135,7 @@
                     <h3>${isEdit ? '✏️ Chỉnh sửa thông tin thành viên' : '➕ Thêm thành viên mới'}</h3>
                 </div>
                 <div class="form-card-body">
-                    <form id="memberForm" method="post" action="MemberServlet" novalidate>
+                    <form id="memberForm" method="post" action="<%= ctx %>/members" novalidate>
                         <input type="hidden" name="action" value="${isEdit ? 'update' : 'insert'}">
                         <c:if test="${isEdit}">
                             <input type="hidden" name="memberID" value="${member.memberID}">
@@ -243,7 +239,7 @@
 
                         <!-- BUTTONS -->
                         <div class="btn-row">
-                            <a href="MemberServlet" class="btn-back">✕ Hủy</a>
+                            <a href="<%= ctx %>/members" class="btn-back">✕ Hủy</a>
                             <button type="submit" class="btn-submit">
                                 ${isEdit ? '💾 Lưu thay đổi' : '➕ Thêm thành viên'}
                             </button>

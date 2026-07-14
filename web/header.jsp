@@ -85,7 +85,7 @@
            class="${currentURI.contains('Book') ? 'active' : ''}">
             <i class="bi bi-book-fill"></i> Sách
         </a>
-        <a href="MemberServlet"
+        <a href="<%= request.getContextPath() %>/members"
            class="${currentURI.contains('Member') ? 'active' : ''}">
             <i class="bi bi-people-fill"></i> Thành viên
         </a>

@@ -1,4 +1,4 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.util.List, model.Fine, model.Staff"%>
 <!DOCTYPE html>
 <html>
@@ -306,15 +306,15 @@
                 <a href="<%= ctx %>/dashboard">🏠 Dashboard</a>
                 <div class="section-title">Quản lý</div>
                 <a href="<%= ctx %>/loan?action=list">📋 Mượn / Trả sách</a>
-                <a href="<%= ctx %>/fine?action=list" class="active">💰 Quản lý phạt</a>
-                <a href="<%= ctx %>/MemberServlet">👥 Thành viên</a>
+                <a href="<%= ctx %>/fines?action=list" class="active">💰 Quản lý phạt</a>
+                <a href="<%= ctx %>/members">👥 Thành viên</a>
                 <a href="#">📖 Sách</a>
                 <a href="#">📦 Bản sao sách</a>
                 <a href="#">🏷️ Thể loại</a>
                 <a href="#">✍️ Tác giả</a>
                 <a href="#">🏢 Nhà xuất bản</a>
                 <div class="section-title">Hệ thống</div>
-                <a href="<%= ctx %>/StaffServlet">👤 Quản lý nhân sự</a>
+                <a href="<%= ctx %>/staffs">👤 Quản lý nhân sự</a>
                 <a href="<%= ctx %>/loan?action=logout">🚪 Đăng xuất</a>
             </div>
         </div>
@@ -373,8 +373,8 @@
 
                 <div class="toolbar">
                     <div style="display:flex;gap:10px">
-                        <a href="<%= ctx %>/fine?action=add" class="btn-create">+ Tạo phiếu phạt</a>
-                        <a href="<%= ctx %>/fine?action=stats" style="background:#4a90d9;color:white;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:bold">📊 Thống kê</a>
+                        <a href="<%= ctx %>/fines?action=add" class="btn-create">+ Tạo phiếu phạt</a>
+                        <a href="<%= ctx %>/fines?action=stats" style="background:#4a90d9;color:white;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:bold">📊 Thống kê</a>
                     </div>
                 </div>
 
@@ -384,7 +384,7 @@
                     if (kw == null) kw = "";
                     if (ps2 == null) ps2 = "";
                 %>
-                <form method="get" action="<%= ctx %>/fine" class="search-bar">
+                <form method="get" action="<%= ctx %>/fines" class="search-bar">
                     <input type="hidden" name="action" value="list">
                     <input type="text" name="keyword" placeholder="Tìm theo tên thành viên..." value="<%= kw %>">
                     <select name="paidStatus">
@@ -394,7 +394,7 @@
                     </select>
                     <button type="submit">🔍 Tìm kiếm</button>
                     <% if (!kw.isEmpty() || !ps2.isEmpty()) { %>
-                    <a href="<%= ctx %>/fine?action=list" class="clear-btn">✕ Xóa bộ lọc</a>
+                    <a href="<%= ctx %>/fines?action=list" class="clear-btn">✕ Xóa bộ lọc</a>
                     <% } %>
                 </form>
 
@@ -438,7 +438,7 @@
                             </td>
                             <td>
                                 <% if (unpaid) { %>
-                                <a href="<%= ctx %>/fine?action=paid&id=<%= f.getFineID() %>"
+                                <a href="<%= ctx %>/fines?action=paid&id=<%= f.getFineID() %>"
                                    class="paid-btn"
                                    onclick="return confirm('Xác nhận đã thu tiền phạt?')">Thu tiền</a>
                                 <% } %>
