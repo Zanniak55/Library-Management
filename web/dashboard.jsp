@@ -1,4 +1,4 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="model.Staff, java.util.List"%>
 <%
     Staff staff = (Staff) session.getAttribute("staff");
@@ -7,6 +7,7 @@
         return;
     }
     String ctx = request.getContextPath();
+    boolean isAdmin = "Admin".equals(staff.getRole());
 %>
 <!DOCTYPE html>
 <html>
@@ -316,15 +317,19 @@
             <div class="sidebar-menu">
                 <a href="<%= ctx %>/dashboard" class="active">🏠 Dashboard</a>
 
-                <div class="section-title">Quản lý</div>
-                <a href="<%= ctx %>/loan?action=list">📋 Mượn / Trả sách</a>
-                <a href="<%= ctx %>/fines?action=list">💰 Quản lý phạt</a>
+                <% if (isAdmin) { %>
+                <a href="<%= ctx %>/staffs">👤 Quản lý nhân sự</a>
+                <% } %>
                 <a href="<%= ctx %>/members">👥 Thành viên</a>
                 <a href="<%= ctx %>/books">📖 Sách</a>
                 <a href="<%= ctx %>/bookcopies">📦 Bản sao sách</a>
-
-                <div class="section-title">Hệ thống</div>
-                <a href="<%= ctx %>/staffs">👤 Quản lý nhân sự</a>
+                <a href="#">🏷️ Thể loại</a>
+                <a href="#">✍️ Tác giả</a>
+                <a href="<%= ctx %>/publishers">🏢 Nhà xuất bản</a>
+                <% if (!isAdmin) { %>
+                <a href="<%= ctx %>/loan?action=list">📋 Mượn/Trả</a>
+                <a href="<%= ctx %>/fines?action=list">💰 Phạt</a>
+                <% } %>
                 <a href="<%= ctx %>/loan?action=logout">🚪 Đăng xuất</a>
             </div>
         </div>

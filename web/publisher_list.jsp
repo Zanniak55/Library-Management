@@ -1,4 +1,4 @@
-﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="model.Staff" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%
@@ -14,7 +14,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Quản lý Thành viên - Thư viện</title>
+    <title>Quản lý Nhà xuất bản - Thư viện</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: Arial, sans-serif; background: #f0f2f5; display: flex; }
@@ -35,9 +35,9 @@
         .topbar { background: white; padding: 14px 28px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
         .topbar h2 { font-size: 20px; color: #333; }
         .topbar-right { display: flex; align-items: center; gap: 12px; font-size: 14px; color: #555; }
-        .badge-role { background: #4a90d9; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; }
-        .btn-logout { background: none; border: 1px solid #ccc; padding: 6px 14px; border-radius: 4px; cursor: pointer; color: #555; font-size: 13px; text-decoration: none; }
-        .btn-logout:hover { background: #f5f5f5; }
+        .badge-role { background: #e74c3c; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; }
+        .btn-logout { background: none; border: 1px solid #ccc; padding: 6px 14px; border-radius: 4px; cursor: pointer; color: #e74c3c; font-size: 13px; text-decoration: none; }
+        .btn-logout:hover { background: #fdf5f5; }
 
         /* CONTENT */
         .content { padding: 28px; }
@@ -50,8 +50,9 @@
         .search-input:focus { border-color: #4a90d9; }
         .search-btn { padding: 8px 16px; background: #4a90d9; color: white; border: none; border-radius: 0 6px 6px 0; cursor: pointer; font-size: 14px; }
         .search-btn:hover { background: #357abd; }
-        .btn-add { padding: 8px 18px; background: #27ae60; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
-        .btn-add:hover { background: #219150; }
+        
+        .btn-add { padding: 8px 18px; background: #4a90d9; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-add:hover { background: #357abd; }
 
         /* ALERT */
         .alert { padding: 10px 16px; border-radius: 6px; margin-bottom: 16px; font-size: 14px; }
@@ -60,29 +61,24 @@
 
         /* TABLE CARD */
         .table-card { background: white; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; }
-        .table-card-header { padding: 16px 20px; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 8px; }
+        .table-card-header { padding: 16px 20px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; }
+        .table-card-header-left { display: flex; align-items: center; gap: 8px; }
         .table-card-header h3 { font-size: 16px; color: #333; font-weight: 600; }
-        .table-card-header .count-badge { background: #4a90d9; color: white; font-size: 12px; padding: 2px 8px; border-radius: 12px; }
 
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
         thead { background: #f8f9fa; }
         thead th { padding: 12px 16px; text-align: left; color: #555; font-weight: 600; font-size: 13px; border-bottom: 2px solid #eee; white-space: nowrap; }
         tbody tr { border-bottom: 1px solid #f5f5f5; transition: background 0.15s; }
         tbody tr:last-child { border-bottom: none; }
-        tbody tr:hover { background: #f8faff; }
+        tbody tr:nth-child(even) { background: #fafafa; }
+        tbody tr:hover { background: #f0f6ff; }
         tbody td { padding: 12px 16px; color: #333; vertical-align: middle; }
 
-        /* BADGES */
-        .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
-        .badge-active  { background: #d4edda; color: #155724; }
-        .badge-locked  { background: #f8d7da; color: #721c24; }
-        .badge-type    { background: #dbeafe; color: #1e40af; }
-
         /* ACTION BUTTONS */
-        .btn-edit   { padding: 5px 12px; background: #fff3cd; color: #856404; border: 1px solid #ffc107; border-radius: 4px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
-        .btn-edit:hover { background: #ffc107; color: #333; }
-        .btn-delete { padding: 5px 12px; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 4px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
-        .btn-delete:hover { background: #e74c3c; color: white; border-color: #e74c3c; }
+        .btn-edit { padding: 4px 10px; color: #4a90d9; border: 1px solid #4a90d9; border-radius: 4px; font-size: 14px; text-decoration: none; display: inline-block; cursor: pointer; transition: all 0.2s; }
+        .btn-edit:hover { background: #4a90d9; color: white; }
+        .btn-delete { padding: 4px 10px; color: #e74c3c; border: 1px solid #e74c3c; border-radius: 4px; font-size: 14px; text-decoration: none; display: inline-block; cursor: pointer; transition: all 0.2s; }
+        .btn-delete:hover { background: #e74c3c; color: white; }
 
         /* EMPTY STATE */
         .empty-state { text-align: center; padding: 48px 20px; color: #aaa; }
@@ -110,33 +106,33 @@
     <div class="sidebar">
         <div class="sidebar-logo"><span>📚</span> Thư viện</div>
         <div class="sidebar-menu">
-                <a href="<%= ctx %>/dashboard">🏠 Dashboard</a>
-                <% if (isAdmin) { %>
-                <a href="<%= ctx %>/staffs">👤 Quản lý nhân sự</a>
-                <% } %>
-                <a href="<%= ctx %>/members" class="active">👥 Thành viên</a>
-                <a href="<%= ctx %>/books">📖 Sách</a>
-                <a href="<%= ctx %>/bookcopies">📦 Bản sao sách</a>
-                <a href="#">🏷️ Thể loại</a>
-                <a href="#">✍️ Tác giả</a>
-                <a href="<%= ctx %>/publishers">🏢 Nhà xuất bản</a>
-                <% if (!isAdmin) { %>
-                <a href="<%= ctx %>/loan?action=list">📋 Mượn/Trả</a>
-                <a href="<%= ctx %>/fines?action=list">💰 Phạt</a>
-                <% } %>
-                <a href="<%= ctx %>/loan?action=logout">🚪 Đăng xuất</a>
-            </div>
+            <a href="<%= ctx %>/dashboard">🏠 Dashboard</a>
+            <% if (isAdmin) { %>
+            <a href="<%= ctx %>/staffs">👤 Quản lý nhân sự</a>
+            <% } %>
+            <a href="<%= ctx %>/members">👥 Thành viên</a>
+            <a href="<%= ctx %>/books">📖 Sách</a>
+            <a href="<%= ctx %>/bookcopies">📦 Bản sao sách</a>
+            <a href="#">🏷️ Thể loại</a>
+            <a href="#">✍️ Tác giả</a>
+            <a href="<%= ctx %>/publishers" class="active">🏢 Nhà xuất bản</a>
+            <% if (!isAdmin) { %>
+            <a href="<%= ctx %>/loan?action=list">📋 Mượn/Trả</a>
+            <a href="<%= ctx %>/fines?action=list">💰 Phạt</a>
+            <% } %>
+            <a href="<%= ctx %>/loan?action=logout">🚪 Đăng xuất</a>
         </div>
+    </div>
 
-        <!-- MAIN -->
+    <!-- MAIN -->
     <div class="main">
         <!-- TOPBAR -->
         <div class="topbar">
-            <h2>👥 Quản lý Thành viên</h2>
+            <h2>Quản lý NXB</h2>
             <div class="topbar-right">
                 👤 <%= staff.getFullName() %>
                 <span class="badge-role"><%= staff.getRole() %></span>
-                <a href="<%= ctx %>/loan?action=logout" class="btn-logout">Đăng xuất</a>
+                <a href="<%= ctx %>/loan?action=logout" class="btn-logout">🚪 Đăng xuất</a>
             </div>
         </div>
 
@@ -151,92 +147,53 @@
                 <div class="alert alert-danger">⚠️ ${errorMsg}</div>
             </c:if>
 
-            <!-- TOOLBAR -->
-            <div class="toolbar">
-                <div class="toolbar-left">
-                    <form method="get" action="<%= ctx %>/members" class="search-group">
-                        <input type="hidden" name="action" value="search">
-                        <input type="text" name="keyword" class="search-input"
-                               placeholder="Tìm tên, email, username..."
-                               value="${not empty keyword ? keyword : ''}">
-                        <button type="submit" class="search-btn">🔍 Tìm</button>
-                    </form>
-                    <c:if test="${action == 'search'}">
-                        <a href="<%= ctx %>/members" style="font-size:13px;color:#4a90d9;text-decoration:none;">✕ Xóa lọc</a>
-                    </c:if>
-                </div>
-                <a href="<%= ctx %>/members?action=add" class="btn-add">➕ Thêm thành viên</a>
-            </div>
-
             <!-- TABLE CARD -->
             <div class="table-card">
                 <div class="table-card-header">
-                    <h3>📋 Danh sách thành viên</h3>
-                    <c:if test="${not empty memberList}">
-                        <span class="count-badge">${memberList.size()} thành viên</span>
-                    </c:if>
+                    <div class="table-card-header-left">
+                        <h3>🏢 Danh sách nhà xuất bản</h3>
+                    </div>
+                    <div>
+                        <a href="<%= ctx %>/publishers?action=add" class="btn-add">➕ Thêm NXB</a>
+                    </div>
                 </div>
 
                 <table>
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Họ và tên</th>
+                            <th>ID</th>
+                            <th>Tên NXB</th>
+                            <th>Địa chỉ</th>
+                            <th>SĐT</th>
                             <th>Email</th>
-                            <th>Điện thoại</th>
-                            <th>Loại thành viên</th>
-                            <th>Ngày đăng ký</th>
-                            <th>Username</th>
-                            <th>Trạng thái</th>
-                            <th style="text-align:center;">Hành động</th>
+                            <th style="text-align:center;">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
                         <c:choose>
-                            <c:when test="${not empty memberList}">
-                                <c:forEach var="m" items="${memberList}" varStatus="idx">
+                            <c:when test="${not empty publishers}">
+                                <c:forEach var="p" items="${publishers}">
                                     <tr>
-                                        <td style="color:#aaa;">${idx.count}</td>
-                                        <td><strong>${m.fullName}</strong></td>
-                                        <td>
-                                            <c:if test="${not empty m.email}">
-                                                <a href="mailto:${m.email}" style="color:#4a90d9;text-decoration:none;">${m.email}</a>
-                                            </c:if>
-                                        </td>
-                                        <td>${m.phone}</td>
-                                        <td><span class="badge badge-type">${m.memberType}</span></td>
-                                        <td>${m.membershipDate}</td>
-                                        <td style="color:#888;">
-                                            <c:choose>
-                                                <c:when test="${not empty m.username}">👤 ${m.username}</c:when>
-                                                <c:otherwise><span style="color:#ddd;">—</span></c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${m.status == 'Hoạt động'}">
-                                                    <span class="badge badge-active">● Hoạt động</span>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <span class="badge badge-locked">● ${m.status}</span>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </td>
+                                        <td>${p.publisherID}</td>
+                                        <td>${p.publisherName}</td>
+                                        <td>${p.address}</td>
+                                        <td>${p.phone}</td>
+                                        <td>${p.email}</td>
                                         <td style="text-align:center;white-space:nowrap;">
-                                            <a href="<%= ctx %>/members?action=edit&id=${m.memberID}" class="btn-edit">✏️ Sửa</a>
+                                            <a href="<%= ctx %>/publishers?action=edit&id=${p.publisherID}" class="btn-edit" title="Sửa">✏️</a>
                                             &nbsp;
-                                            <a href="#" class="btn-delete"
-                                               onclick="confirmDelete(${m.memberID}, '${m.fullName}'); return false;">🗑️ Xóa</a>
+                                            <a href="#" class="btn-delete" title="Xóa"
+                                               onclick="confirmDelete(${p.publisherID}, '${p.publisherName}'); return false;">🗑️</a>
                                         </td>
                                     </tr>
                                 </c:forEach>
                             </c:when>
                             <c:otherwise>
                                 <tr>
-                                    <td colspan="9">
+                                    <td colspan="6">
                                         <div class="empty-state">
-                                            <div class="icon">👤</div>
-                                            <p>Không tìm thấy thành viên nào.</p>
+                                            <div class="icon">🏢</div>
+                                            <p>Không tìm thấy nhà xuất bản nào.</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -244,13 +201,6 @@
                         </c:choose>
                     </tbody>
                 </table>
-
-                <c:if test="${not empty memberList}">
-                    <div class="table-footer">
-                        Hiển thị <strong>${memberList.size()}</strong> thành viên
-                        <c:if test="${action == 'search'}"> — kết quả cho "<em>${keyword}</em>"</c:if>
-                    </div>
-                </c:if>
             </div>
         </div>
     </div>
@@ -259,7 +209,7 @@
     <div class="modal-overlay" id="deleteModal">
         <div class="modal-box">
             <h4>⚠️ Xác nhận xóa</h4>
-            <p id="deleteModalText">Bạn có chắc muốn xóa thành viên này?</p>
+            <p id="deleteModalText">Bạn có chắc muốn xóa nhà xuất bản này?</p>
             <div class="modal-actions">
                 <button class="btn-cancel-modal" onclick="closeModal()">Hủy</button>
                 <a id="deleteConfirmLink" href="#" class="btn-confirm-delete">🗑️ Xóa</a>
@@ -270,8 +220,8 @@
     <script>
         function confirmDelete(id, name) {
             document.getElementById('deleteModalText').textContent =
-                'Xóa thành viên "' + name + '"? Hành động này không thể hoàn tác!';
-            document.getElementById('deleteConfirmLink').href = '<%= ctx %>/members?action=delete&id=' + id;
+                'Xóa nhà xuất bản "' + name + '"? Hành động này có thể ảnh hưởng tới các sách thuộc nhà xuất bản này!';
+            document.getElementById('deleteConfirmLink').href = '<%= ctx %>/publishers?action=delete&id=' + id;
             document.getElementById('deleteModal').classList.add('show');
         }
         function closeModal() {
