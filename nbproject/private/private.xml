@@ -5,23 +5,13 @@
         <group>
             <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/src/java/controller/TransactionServlet.java</file>
             <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/src/java/controller/DashboardServlet.java</file>
-            <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/src/java/dao/BookcopyDAO.java</file>
-            <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/web/WEB-INF/web.xml</file>
-            <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/web/views/bookcopy_form.jsp</file>
-            <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/src/java/controller/FineServlet.java</file>
-            <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/src/java/model/Book.java</file>
-            <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/web/dashboard.jsp</file>
-            <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/web/views/book_list.jsp</file>
-            <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/web/WEB-INF/ConnectDB.properties</file>
-            <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/src/java/model/Bookcopy.java</file>
             <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/src/java/controller/StaffServlet.java</file>
+            <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/web/WEB-INF/web.xml</file>
             <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/web/header.jsp</file>
-            <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/web/views/bookcopy_list.jsp</file>
-            <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/src/java/controller/BookServlet.java</file>
+            <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/src/java/controller/FineServlet.java</file>
             <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/src/java/controller/MemberServlet.java</file>
-            <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/src/java/controller/BookcopyServlet.java</file>
-            <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/web/views/book_form.jsp</file>
-            <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/src/java/dao/BookDAO.java</file>
+            <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/web/dashboard.jsp</file>
+            <file>file:/C:/PRJ301_SE2023/Library-Management-main/Library-Management/web/WEB-INF/ConnectDB.properties</file>
         </group>
     </open-files>
 </project-private>
