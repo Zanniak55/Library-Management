@@ -9,7 +9,6 @@ import model.Staff;
 
 public class StaffDAO extends DBContext {
 
-    // ── Đăng nhập ────────────────────────────────────────────────────────────
     public Staff login(String email, String password) {
         String sql = "SELECT * FROM Staff WHERE Email = ? AND Password = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -25,12 +24,10 @@ public class StaffDAO extends DBContext {
         return null;
     }
 
-    // ── Lấy tất cả nhân viên ─────────────────────────────────────────────────
     public List<Staff> getAllStaff() {
         List<Staff> list = new ArrayList<>();
         String sql = "SELECT StaffID, FullName, Email, Role FROM Staff ORDER BY StaffID";
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 list.add(mapRow(rs));
             }
@@ -40,7 +37,6 @@ public class StaffDAO extends DBContext {
         return list;
     }
 
-    // ── Lấy nhân viên theo ID ─────────────────────────────────────────────────
     public Staff getStaffByID(int staffID) {
         String sql = "SELECT StaffID, FullName, Email, Role FROM Staff WHERE StaffID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -56,7 +52,6 @@ public class StaffDAO extends DBContext {
         return null;
     }
 
-    // ── Thêm nhân viên ───────────────────────────────────────────────────────
     public boolean addStaff(Staff s) {
         String sql = "INSERT INTO Staff (FullName, Email, Password, Role) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -71,7 +66,6 @@ public class StaffDAO extends DBContext {
         return false;
     }
 
-    // ── Cập nhật nhân viên ───────────────────────────────────────────────────
     public boolean updateStaff(Staff s) {
         String sql;
         if (s.getPassword() != null && !s.getPassword().isEmpty()) {
@@ -97,7 +91,6 @@ public class StaffDAO extends DBContext {
         return false;
     }
 
-    // ── Xóa nhân viên ────────────────────────────────────────────────────────
     public boolean deleteStaff(int staffID) {
         String sql = "DELETE FROM Staff WHERE StaffID=?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -109,16 +102,16 @@ public class StaffDAO extends DBContext {
         return false;
     }
 
-    // ── Helper: map ResultSet → Staff ────────────────────────────────────────
     private Staff mapRow(ResultSet rs) throws SQLException {
         Staff s = new Staff();
         s.setStaffID(rs.getInt("StaffID"));
         s.setFullName(rs.getString("FullName"));
         s.setEmail(rs.getString("Email"));
         s.setRole(rs.getString("Role"));
-        // Password chỉ map khi cần (login), không lấy khi list
-        try { s.setPassword(rs.getString("Password")); } catch (SQLException ignored) {}
+        try {
+            s.setPassword(rs.getString("Password"));
+        } catch (SQLException ignored) {
+        }
         return s;
     }
 }
-
