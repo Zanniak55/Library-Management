@@ -1,4 +1,4 @@
-<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="6.0" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+﻿<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="6.0" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
 <welcome-file-list>
 <welcome-file>index.jsp</welcome-file>
 </welcome-file-list>
@@ -34,14 +34,8 @@
 <servlet-name>BookcopyServlet</servlet-name>
 <url-pattern>/bookcopies</url-pattern>
 </servlet-mapping>
-<servlet>
-<servlet-name>CategoryServlet</servlet-name>
-<servlet-class>controller.CategoryServlet</servlet-class>
-</servlet>
-<servlet-mapping>
-<servlet-name>CategoryServlet</servlet-name>
-<url-pattern>/categories</url-pattern>
-</servlet-mapping>
+
+
 <servlet>
 <servlet-name>AuthorServlet</servlet-name>
 <servlet-class>controller.AuthorServlet</servlet-class>

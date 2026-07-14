@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="model.Staff" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%
@@ -114,7 +114,7 @@
             <a href="<%= ctx %>/books">📖 Sách</a>
             <a href="<%= ctx %>/bookcopies">📦 Bản sao sách</a>
             <a href="#">🏷️ Thể loại</a>
-            <a href="#">✍️ Tác giả</a>
+            <a href="<%= ctx %>/authors">✍️ Tác giả</a>
             <a href="<%= ctx %>/publishers" class="active">🏢 Nhà xuất bản</a>
             <% if (!isAdmin) { %>
             <a href="<%= ctx %>/loan?action=list">📋 Mượn/Trả</a>

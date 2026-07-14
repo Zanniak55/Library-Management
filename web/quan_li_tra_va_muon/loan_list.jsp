@@ -92,7 +92,7 @@
                 <a href="<%= ctx %>/books">📖 Sách</a>
                 <a href="<%= ctx %>/bookcopies">📦 Bản sao sách</a>
                 <a href="#">🏷️ Thể loại</a>
-                <a href="#">✍️ Tác giả</a>
+                <a href="<%= ctx %>/authors">✍️ Tác giả</a>
                 <a href="<%= ctx %>/publishers">🏢 Nhà xuất bản</a>
                 <% if (!isAdmin) { %>
                 <a href="<%= ctx %>/loan?action=list" class="active">📋 Mượn/Trả</a>
