@@ -295,6 +295,7 @@
         <%
             Staff staff = (Staff) session.getAttribute("staff");
             String ctx = request.getContextPath();
+    boolean isAdmin = "Admin".equals(staff != null ? staff.getRole() : "");
             double totalUnpaid = request.getAttribute("totalUnpaid") != null
                                ? (Double) request.getAttribute("totalUnpaid") : 0;
         %>
@@ -304,17 +305,19 @@
             <div class="sidebar-logo"><span>📚</span> Thư viện</div>
             <div class="sidebar-menu">
                 <a href="<%= ctx %>/dashboard">🏠 Dashboard</a>
-                <div class="section-title">Quản lý</div>
-                <a href="<%= ctx %>/loan?action=list">📋 Mượn / Trả sách</a>
-                <a href="<%= ctx %>/fines?action=list" class="active">💰 Quản lý phạt</a>
-                <a href="<%= ctx %>/members">👥 Thành viên</a>
-                <a href="#">📖 Sách</a>
-                <a href="#">📦 Bản sao sách</a>
-                <a href="#">🏷️ Thể loại</a>
-                <a href="#">✍️ Tác giả</a>
-                <a href="#">🏢 Nhà xuất bản</a>
-                <div class="section-title">Hệ thống</div>
+                <% if (isAdmin) { %>
                 <a href="<%= ctx %>/staffs">👤 Quản lý nhân sự</a>
+                <% } %>
+                <a href="<%= ctx %>/members">👥 Thành viên</a>
+                <a href="<%= ctx %>/books">📖 Sách</a>
+                <a href="<%= ctx %>/bookcopies">📦 Bản sao sách</a>
+                <a href="#">🏷️ Thể loại</a>
+                <a href="<%= ctx %>/authors">✍️ Tác giả</a>
+                <a href="<%= ctx %>/publishers">🏢 Nhà xuất bản</a>
+                <% if (!isAdmin) { %>
+                <a href="<%= ctx %>/loan?action=list">📋 Mượn/Trả</a>
+                <a href="<%= ctx %>/fines?action=list" class="active">💰 Phạt</a>
+                <% } %>
                 <a href="<%= ctx %>/loan?action=logout">🚪 Đăng xuất</a>
             </div>
         </div>
