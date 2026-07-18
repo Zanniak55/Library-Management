@@ -41,6 +41,13 @@
                 padding-bottom: .3rem;
                 margin-bottom: 1rem;
             }
+            /* Custom invalid style cho select */
+            .form-select.is-invalid {
+                border-color: #dc3545;
+            }
+            .form-select.is-invalid + .invalid-feedback {
+                display: block;
+            }
         </style>
     </head>
     <body>
@@ -53,7 +60,6 @@
             </div>
             <div class="form-body">
 
-                <%-- ── Thông báo lỗi / thành công hiện ngay trong form ── --%>
                 <c:if test="${not empty sessionScope.error}">
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <i class="bi bi-exclamation-circle-fill me-2"></i>${sessionScope.error}
@@ -61,18 +67,11 @@
                     </div>
                     <c:remove var="error" scope="session"/>
                 </c:if>
-                <c:if test="${not empty sessionScope.success}">
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="bi bi-check-circle-fill me-2"></i>${sessionScope.success}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                    <c:remove var="success" scope="session"/>
-                </c:if>
 
                 <form action="books" method="post" id="bookForm" novalidate>
-
                     <input type="hidden" name="actionType" value="${empty book ? 'add' : 'edit'}">
 
+                    <%-- ── Thông Tin Cơ Bản ── --%>
                     <p class="section-label">Thông Tin Cơ Bản</p>
 
                     <div class="row g-3 mb-3">
@@ -80,8 +79,7 @@
                             <label class="form-label">ISBN</label>
                             <c:choose>
                                 <c:when test="${not empty book}">
-                                    <input type="text" name="isbn" class="form-control"
-                                           value="${book.isbn}" readonly>
+                                    <input type="text" name="isbn" class="form-control" value="${book.isbn}" readonly>
                                 </c:when>
                                 <c:otherwise>
                                     <div class="input-group">
@@ -93,15 +91,18 @@
                                             <i class="bi bi-arrow-clockwise"></i>
                                         </button>
                                     </div>
+                                    <div class="invalid-feedback">Vui lòng nhập ISBN.</div>
                                     <small class="text-muted">Tự động tạo, hoặc nhấn 🔄 để tạo lại.</small>
                                 </c:otherwise>
                             </c:choose>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Năm Xuất Bản</label>
-                            <input type="number" name="publicationYear" class="form-control"
-                                   min="1000" max="2099" placeholder="VD: 2023"
+                            <label class="form-label">Năm Xuất Bản <span class="text-danger">*</span></label>
+                            <input type="number" name="publicationYear" id="publicationYear"
+                                   class="form-control" required min="1000" max="2099"
+                                   placeholder="VD: 2023"
                                    value="${not empty book ? book.publicationYear : ''}">
+                            <div class="invalid-feedback">Vui lòng nhập năm xuất bản hợp lệ (1000–2099).</div>
                         </div>
                     </div>
 
@@ -116,23 +117,36 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Ngôn Ngữ</label>
-                        <select name="language" class="form-select">
-                            <c:set var="lang" value="${not empty book ? book.language : 'Tiếng Việt'}"/>
+                        <label class="form-label">Tác Giả <span class="text-danger">*</span></label>
+                        <input type="text" name="authorName" id="authorName"
+                               class="form-control" required
+                               placeholder="Nhập tên tác giả…"
+                               value="${not empty book ? book.authors : ''}">
+                        <div class="invalid-feedback">Vui lòng nhập tên tác giả.</div>
+                        <small class="text-muted">Nhiều tác giả cách nhau bằng dấu phẩy.</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Ngôn Ngữ <span class="text-danger">*</span></label>
+                        <select name="language" id="language" class="form-select" required>
+                            <option value="">-- Chọn ngôn ngữ --</option>
+                            <c:set var="lang" value="${not empty book ? book.language : ''}"/>
                             <option value="Tiếng Việt" ${lang == 'Tiếng Việt' ? 'selected' : ''}>Tiếng Việt</option>
                             <option value="Tiếng Anh"  ${lang == 'Tiếng Anh'  ? 'selected' : ''}>Tiếng Anh</option>
                             <option value="Tiếng Nhật" ${lang == 'Tiếng Nhật' ? 'selected' : ''}>Tiếng Nhật</option>
                             <option value="Tiếng Pháp" ${lang == 'Tiếng Pháp' ? 'selected' : ''}>Tiếng Pháp</option>
                             <option value="Khác"       ${lang == 'Khác'       ? 'selected' : ''}>Khác</option>
                         </select>
+                        <div class="invalid-feedback">Vui lòng chọn ngôn ngữ.</div>
                     </div>
 
+                    <%-- ── Phân Loại & NXB ── --%>
                     <p class="section-label mt-4">Phân Loại & Nhà Xuất Bản</p>
 
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">Thể Loại</label>
-                            <select name="categoryID" class="form-select">
+                            <label class="form-label">Thể Loại <span class="text-danger">*</span></label>
+                            <select name="categoryID" id="categoryID" class="form-select" required>
                                 <option value="">-- Chọn thể loại --</option>
                                 <c:forEach var="cat" items="${categories}">
                                     <option value="${cat[0]}"
@@ -141,10 +155,11 @@
                                     </option>
                                 </c:forEach>
                             </select>
+                            <div class="invalid-feedback">Vui lòng chọn thể loại.</div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Nhà Xuất Bản</label>
-                            <select name="publisherID" class="form-select">
+                            <label class="form-label">Nhà Xuất Bản <span class="text-danger">*</span></label>
+                            <select name="publisherID" id="publisherID" class="form-select" required>
                                 <option value="">-- Chọn NXB --</option>
                                 <c:forEach var="pub" items="${publishers}">
                                     <option value="${pub[0]}"
@@ -153,26 +168,20 @@
                                     </option>
                                 </c:forEach>
                             </select>
+                            <div class="invalid-feedback">Vui lòng chọn nhà xuất bản.</div>
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Tác Giả</label>
-                        <input type="text" name="authorName" class="form-control"
-                               placeholder="Nhập tên tác giả…"
-                               value="${not empty book ? book.authors : ''}">
-                        <small class="text-muted">Nhiều tác giả cách nhau bằng dấu phẩy.</small>
-                    </div>
-
+                    <%-- ── Số Lượng ── --%>
                     <p class="section-label mt-4">Số Lượng</p>
 
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
                             <label class="form-label">Tổng Số Lượng <span class="text-danger">*</span></label>
                             <input type="number" name="totalQuantity" id="totalQty"
-                                   class="form-control" min="0" required placeholder="0"
+                                   class="form-control" min="1" required placeholder="0"
                                    value="${not empty book ? book.totalQuantity : ''}">
-                            <div class="invalid-feedback">Vui lòng nhập số lượng.</div>
+                            <div class="invalid-feedback">Vui lòng nhập số lượng (tối thiểu 1).</div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Số Lượng Còn Lại</label>
@@ -217,7 +226,7 @@
                                                             generateISBN();
                                                     };
 
-                                                    // ── Check trùng tên sách realtime khi rời ô nhập ────────────────
+                                                    // ── Check trùng tên sách realtime ────────────────────────────────
                                                     const titleField = document.getElementById('titleField');
                                                     const submitBtn = document.getElementById('submitBtn');
                                                     const titleFeedback = document.getElementById('titleFeedback');
@@ -227,7 +236,6 @@
                                                             const title = this.value.trim();
                                                             if (!title)
                                                                 return;
-
                                                             fetch('books?action=checkTitle&title=' + encodeURIComponent(title))
                                                                     .then(r => r.text())
                                                                     .then(result => {
@@ -240,26 +248,78 @@
                                                                         }
                                                                     });
                                                         });
-
                                                         titleField.addEventListener('input', function () {
                                                             titleFeedback.innerHTML = '';
                                                             submitBtn.disabled = false;
                                                         });
                                                     }
 
-                                                    // ── Validation ──────────────────────────────────────────────────
+                                                    // ── Validation khi submit ────────────────────────────────────────
                                                     document.getElementById('bookForm').addEventListener('submit', function (e) {
-                                                        if (!this.checkValidity()) {
+                                                        let valid = true;
+
+                                                        // Reset tất cả custom invalid trước
+                                                        this.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+
+                                                        // Check từng field bắt buộc
+                                                        const fields = ['titleField', 'authorName', 'language',
+                                                            'categoryID', 'publisherID', 'publicationYear', 'totalQty'];
+                                                        fields.forEach(id => {
+                                                            const el = document.getElementById(id);
+                                                            if (!el)
+                                                                return;
+                                                            const val = el.value.trim();
+                                                            if (!val || val === '' || val === '0') {
+                                                                el.classList.add('is-invalid');
+                                                                valid = false;
+                                                            }
+                                                        });
+
+                                                        // totalQty phải >= 1
+                                                        const qty = document.getElementById('totalQty');
+                                                        if (qty && parseInt(qty.value) < 1) {
+                                                            qty.classList.add('is-invalid');
+                                                            valid = false;
+                                                        }
+
+                                                        // publicationYear phải hợp lệ
+                                                        const year = document.getElementById('publicationYear');
+                                                        if (year) {
+                                                            const y = parseInt(year.value);
+                                                            if (!y || y < 1000 || y > 2099) {
+                                                                year.classList.add('is-invalid');
+                                                                valid = false;
+                                                            }
+                                                        }
+
+                                                        if (!valid) {
                                                             e.preventDefault();
                                                             e.stopPropagation();
+                                                            // Scroll đến field lỗi đầu tiên
+                                                            const firstInvalid = this.querySelector('.is-invalid');
+                                                            if (firstInvalid)
+                                                                firstInvalid.scrollIntoView({behavior: 'smooth', block: 'center'});
                                                         }
-                                                        this.classList.add('was-validated');
                                                     });
 
+                                                    // ── availableQty không vượt totalQty ─────────────────────────────
                                                     document.getElementById('totalQty').addEventListener('input', function () {
                                                         const avail = document.getElementById('availQty');
                                                         if (parseInt(avail.value) > parseInt(this.value))
                                                             avail.value = this.value;
+                                                        // Xóa invalid khi đã nhập
+                                                        if (parseInt(this.value) >= 1)
+                                                            this.classList.remove('is-invalid');
+                                                    });
+
+                                                    // ── Xóa invalid khi người dùng bắt đầu nhập ─────────────────────
+                                                    document.querySelectorAll('.form-control, .form-select').forEach(el => {
+                                                        el.addEventListener('input', function () {
+                                                            this.classList.remove('is-invalid');
+                                                        });
+                                                        el.addEventListener('change', function () {
+                                                            this.classList.remove('is-invalid');
+                                                        });
                                                     });
         </script>
     </body>
