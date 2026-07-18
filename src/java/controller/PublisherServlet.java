@@ -66,14 +66,36 @@ public class PublisherServlet extends HttpServlet {
     private void listPublishers(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String keyword = request.getParameter("keyword");
-        List<Publisher> list;
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            list = publisherDAO.searchPublishers(keyword);
-            request.setAttribute("keyword", keyword);
-        } else {
-            list = publisherDAO.getAllPublishers();
+        if (keyword == null || keyword.trim().isEmpty()) {
+            keyword = (String) request.getAttribute("forcedKeyword");
         }
+        if (keyword == null) keyword = "";
+
+        int page = 1;
+        int limit = 10;
+        String pageParam = request.getParameter("page");
+        if (pageParam != null && !pageParam.isEmpty()) {
+            try { page = Integer.parseInt(pageParam); } catch (NumberFormatException e) { }
+        }
+        int offset = (page - 1) * limit;
+
+        List<Publisher> list;
+        int totalRecords;
+
+        if (keyword.trim().isEmpty()) {
+            list = publisherDAO.getPublishers(offset, limit);
+            totalRecords = publisherDAO.getTotalPublishers();
+        } else {
+            list = publisherDAO.searchPublishers(keyword, offset, limit);
+            totalRecords = publisherDAO.getTotalSearchPublishers(keyword);
+            request.setAttribute("keyword", keyword);
+        }
+
+        int totalPages = (int) Math.ceil((double) totalRecords / limit);
+
         request.setAttribute("publishers", list);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
         request.getRequestDispatcher("/publisher_list.jsp").forward(request, response);
     }
 
@@ -102,6 +124,7 @@ public class PublisherServlet extends HttpServlet {
         Publisher p = new Publisher(0, name, address, phone, email);
         if (publisherDAO.insertPublisher(p)) {
             request.setAttribute("successMsg", "Thêm nhà xuất bản thành công!");
+            request.setAttribute("forcedKeyword", name);
         } else {
             request.setAttribute("errorMsg", "Thêm nhà xuất bản thất bại!");
         }
@@ -131,7 +154,7 @@ public class PublisherServlet extends HttpServlet {
         if (publisherDAO.deletePublisher(id)) {
             request.setAttribute("successMsg", "Xóa nhà xuất bản thành công!");
         } else {
-            request.setAttribute("errorMsg", "Xóa nhà xuất bản thất bại!");
+            request.setAttribute("errorMsg", "Xóa thất bại. Nhà xuất bản này đang có sách lưu trong hệ thống!");
         }
         listPublishers(request, response);
     }

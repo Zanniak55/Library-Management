@@ -8,7 +8,7 @@ import model.Fine;
 public class FineDAO extends DBContext {
 
     // Lấy tất cả phiếu phạt kèm tên thành viên
-    public List<Fine> getAllFines(String keyword, String paidStatus) {
+    public List<Fine> getAllFines(String keyword, String paidStatus, int offset, int limit) {
         List<Fine> list = new ArrayList<>();
         String sql = """
             SELECT f.FineID, f.TransactionID, f.Reason, f.Amount,
@@ -21,6 +21,7 @@ public class FineDAO extends DBContext {
             WHERE (? = '' OR m.FullName LIKE ?)
               AND (? = '' OR f.PaidStatus = ?)
             ORDER BY f.FineID DESC
+            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
             """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             String kw = keyword == null ? "" : keyword.trim();
@@ -29,6 +30,8 @@ public class FineDAO extends DBContext {
             ps.setString(2, "%" + kw + "%");
             ps.setString(3, st);
             ps.setString(4, st);
+            ps.setInt(5, offset);
+            ps.setInt(6, limit);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Fine f = new Fine();
@@ -48,6 +51,31 @@ public class FineDAO extends DBContext {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public int getTotalFines(String keyword, String paidStatus) {
+        String sql = """
+            SELECT COUNT(*)
+            FROM Fine f
+            JOIN [Transaction] t ON f.TransactionID = t.TransactionID
+            JOIN Member m ON t.MemberID = m.MemberID
+            WHERE (? = '' OR m.FullName LIKE ?)
+              AND (? = '' OR f.PaidStatus = ?)
+            """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            String kw = keyword == null ? "" : keyword.trim();
+            String st = paidStatus == null ? "" : paidStatus.trim();
+            ps.setString(1, kw);
+            ps.setString(2, "%" + kw + "%");
+            ps.setString(3, st);
+            ps.setString(4, st);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     // Tạo phiếu phạt mới (thủ công)
@@ -195,6 +223,42 @@ public class FineDAO extends DBContext {
                     rs.getString("DueDate"),
                     rs.getString("Status")
                 });
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<Fine> getFinesByMember(int memberID) {
+        List<Fine> list = new ArrayList<>();
+        String sql = """
+            SELECT f.FineID, f.TransactionID, f.Reason, f.Amount,
+                   f.IssueDate, f.PaidDate, f.PaidStatus,
+                   m.FullName as MemberName, t.BorrowDate, t.DueDate
+            FROM Fine f
+            JOIN [Transaction] t ON f.TransactionID = t.TransactionID
+            JOIN Member m ON t.MemberID = m.MemberID
+            WHERE t.MemberID = ?
+            ORDER BY f.FineID DESC
+            """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, memberID);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Fine f = new Fine();
+                    f.setFineID(rs.getInt("FineID"));
+                    f.setTransactionID(rs.getInt("TransactionID"));
+                    f.setReason(rs.getString("Reason"));
+                    f.setAmount(rs.getDouble("Amount"));
+                    f.setIssueDate(rs.getDate("IssueDate") != null ? rs.getDate("IssueDate").toString() : null);
+                    f.setPaidDate(rs.getDate("PaidDate") != null ? rs.getDate("PaidDate").toString() : null);
+                    f.setPaidStatus(rs.getString("PaidStatus"));
+                    f.setMemberName(rs.getString("MemberName"));
+                    f.setBorrowDate(rs.getDate("BorrowDate") != null ? rs.getDate("BorrowDate").toString() : null);
+                    f.setDueDate(rs.getDate("DueDate") != null ? rs.getDate("DueDate").toString() : null);
+                    list.add(f);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

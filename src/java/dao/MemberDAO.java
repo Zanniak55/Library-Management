@@ -10,15 +10,20 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MemberDAO extends DBContext {
-    public List<Member> getAllMembers() {
+    public List<Member> getMembers(int offset, int limit) {
         List<Member> list = new ArrayList<>();
         String sql = "SELECT MemberID, FullName, Phone, Email, Address, "
                 + "MemberType, MembershipDate, Status, Username "
                 + "FROM Member "
-                + "ORDER BY MemberID";
-        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                list.add(mapRow(rs, false));
+                + "ORDER BY MemberID "
+                + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, offset);
+            ps.setInt(2, limit);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs, false));
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(MemberDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -26,6 +31,16 @@ public class MemberDAO extends DBContext {
         return list;
     }
 
+    public int getTotalMembers() {
+        String sql = "SELECT COUNT(*) FROM Member";
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException ex) {
+            Logger.getLogger(MemberDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+    
     public Member getMemberByID(int memberID) {
         String sql = "SELECT MemberID, FullName, Phone, Email, Address, "
                 + "MemberType, MembershipDate, Status, Username "
@@ -60,18 +75,21 @@ public class MemberDAO extends DBContext {
         return null;
     }
 
-    public List<Member> searchMembers(String keyword) {
+    public List<Member> searchMembers(String keyword, int offset, int limit) {
         List<Member> list = new ArrayList<>();
         String sql = "SELECT MemberID, FullName, Phone, Email, Address, "
                 + "MemberType, MembershipDate, Status, Username "
                 + "FROM Member "
                 + "WHERE FullName LIKE ? OR Email LIKE ? OR Username LIKE ? "
-                + "ORDER BY MemberID";
+                + "ORDER BY MemberID "
+                + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             String pattern = "%" + keyword + "%";
             ps.setString(1, pattern);
             ps.setString(2, pattern);
             ps.setString(3, pattern);
+            ps.setInt(4, offset);
+            ps.setInt(5, limit);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(mapRow(rs, false));
@@ -81,6 +99,22 @@ public class MemberDAO extends DBContext {
             Logger.getLogger(MemberDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return list;
+    }
+
+    public int getTotalSearchMembers(String keyword) {
+        String sql = "SELECT COUNT(*) FROM Member WHERE FullName LIKE ? OR Email LIKE ? OR Username LIKE ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            String pattern = "%" + keyword + "%";
+            ps.setString(1, pattern);
+            ps.setString(2, pattern);
+            ps.setString(3, pattern);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(MemberDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
     }
 
     public boolean addMember(Member m) {
@@ -172,5 +206,17 @@ public class MemberDAO extends DBContext {
 
     private String nullIfEmpty(String s) {
         return (s == null || s.trim().isEmpty()) ? null : s.trim();
+    }
+
+    public boolean changePassword(int memberID, String newPassword) {
+        String sql = "UPDATE Member SET Password = ? WHERE MemberID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, newPassword);
+            ps.setInt(2, memberID);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

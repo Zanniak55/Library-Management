@@ -1,11 +1,11 @@
-﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <c:set var="isEdit" value="${not empty staff && staff.staffID > 0}"/>
+    <c:set var="isEdit" value="${not empty editStaff && editStaff.staffID > 0}"/>
     <title>${isEdit ? 'Sửa nhân viên' : 'Thêm nhân viên'} – Thư viện</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -72,7 +72,7 @@
             <form id="staffForm" method="post" action="<%= request.getContextPath() %>/staffs" novalidate>
                 <input type="hidden" name="action" value="${isEdit ? 'update' : 'insert'}">
                 <c:if test="${isEdit}">
-                    <input type="hidden" name="staffID" value="${staff.staffID}">
+                    <input type="hidden" name="staffID" value="${editStaff.staffID}">
                 </c:if>
                 <%-- Họ tên --%>
                 <div class="form-group" id="grp-fullName">
@@ -82,7 +82,7 @@
                     <input type="text" id="fullName" name="fullName"
                            class="form-control-custom"
                            placeholder="Nguyễn Văn A"
-                           value="${not empty staff ? staff.fullName : ''}">
+                           value="${not empty editStaff ? editStaff.fullName : ''}">
                     <div class="field-error" id="err-fullName">Vui lòng nhập họ và tên.</div>
                 </div>
                 <%-- Email --%>
@@ -93,15 +93,15 @@
                     <input type="email" id="email" name="email"
                            class="form-control-custom"
                            placeholder="nhanvien@thuvien.vn"
-                           value="${not empty staff ? staff.email : ''}">
+                           value="${not empty editStaff ? editStaff.email : ''}">
                     <div class="field-error" id="err-email">Email không hợp lệ.</div>
                 </div>
                 <%-- Vai trò --%>
                 <div class="form-group">
                     <label class="form-label-custom" for="role">Vai trò</label>
                     <select id="role" name="role" class="form-select-custom">
-                        <option value="Admin"  ${(empty staff || staff.role == 'Admin')  ? 'selected' : ''}>Admin</option>
-                        <option value="Staff"  ${staff.role == 'Staff'  ? 'selected' : ''}>Staff (Nhân viên)</option>
+                        <option value="Admin"  ${(empty editStaff || editStaff.role == 'Admin')  ? 'selected' : ''}>Admin</option>
+                        <option value="Staff"  ${editStaff.role == 'Staff'  ? 'selected' : ''}>Staff (Nhân viên)</option>
                     </select>
                 </div>
                 <%-- Mật khẩu --%>

@@ -5,9 +5,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
+import java.util.List;
 import model.Staff;
 
-@WebServlet(name = "FineServlet", urlPatterns = {"/fine"})
+@WebServlet(name = "FineServlet", urlPatterns = {"/fines"})
 public class FineServlet extends HttpServlet {
 
     @Override
@@ -28,11 +29,27 @@ public class FineServlet extends HttpServlet {
                 dao.autoCreateOverdueFines();
                 String keyword    = request.getParameter("keyword");
                 String paidStatus = request.getParameter("paidStatus");
-                request.setAttribute("fines",      dao.getAllFines(keyword, paidStatus));
+                
+                int page = 1;
+                int limit = 10;
+                String pageParam = request.getParameter("page");
+                if (pageParam != null && !pageParam.isEmpty()) {
+                    try { page = Integer.parseInt(pageParam); } catch (NumberFormatException e) { }
+                }
+                int offset = (page - 1) * limit;
+
+                List<model.Fine> list = dao.getAllFines(keyword, paidStatus, offset, limit);
+                int totalRecords = dao.getTotalFines(keyword, paidStatus);
+                int totalPages = (int) Math.ceil((double) totalRecords / limit);
+                
+                request.setAttribute("fines",      list);
                 request.setAttribute("totalUnpaid", dao.getTotalUnpaid());
                 request.setAttribute("totalPaid",   dao.getTotalPaid());
                 request.setAttribute("keyword",    keyword    != null ? keyword    : "");
                 request.setAttribute("paidStatus", paidStatus != null ? paidStatus : "");
+                request.setAttribute("currentPage", page);
+                request.setAttribute("totalPages", totalPages);
+                
                 request.getRequestDispatcher("/quan_li_phat/fine_list.jsp").forward(request, response);
             }
             case "add" -> {

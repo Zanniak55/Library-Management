@@ -96,6 +96,16 @@ public class Transaction {
         this.memberName = memberName;
     }
     
+    private String bookTitles;
+
+    public String getBookTitles() {
+        return bookTitles;
+    }
+
+    public void setBookTitles(String bookTitles) {
+        this.bookTitles = bookTitles;
+    }
+    
     
     
 

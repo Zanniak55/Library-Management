@@ -18,22 +18,38 @@ import model.Bookcopy;
 public class BookcopyDAO extends DBContext {
 
     // ─── Lấy tất cả bản sao (JOIN Book để lấy tên sách) ─────────────────────
-    public List<Bookcopy> getAllCopies() {
+    public List<Bookcopy> getCopies(int offset, int limit) {
         List<Bookcopy> list = new ArrayList<>();
         String sql
                 = "SELECT bc.CopyID, bc.Barcode, bc.CopyNumber, bc.Condition, "
                 + "       bc.Status, bc.ShelfLocation, bc.ISBN, b.Title AS BookTitle "
                 + "FROM Book_Copy bc "
                 + "JOIN Book b ON bc.ISBN = b.ISBN "
-                + "ORDER BY bc.ISBN, bc.CopyNumber";
-        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                list.add(mapRow(rs));
+                + "ORDER BY bc.ISBN, bc.CopyNumber "
+                + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, offset);
+            ps.setInt(2, limit);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public int getTotalCopies() {
+        String sql = "SELECT COUNT(*) FROM Book_Copy";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     // ─── Lấy bản sao theo ISBN ───────────────────────────────────────────────
@@ -81,7 +97,7 @@ public class BookcopyDAO extends DBContext {
     }
 
     // ─── Tìm kiếm theo tên sách / barcode / vị trí ───────────────────────────
-    public List<Bookcopy> searchCopies(String keyword) {
+    public List<Bookcopy> searchCopies(String keyword, int offset, int limit) {
         List<Bookcopy> list = new ArrayList<>();
         String sql
                 = "SELECT bc.CopyID, bc.Barcode, bc.CopyNumber, bc.Condition, "
@@ -89,12 +105,15 @@ public class BookcopyDAO extends DBContext {
                 + "FROM Book_Copy bc "
                 + "JOIN Book b ON bc.ISBN = b.ISBN "
                 + "WHERE b.Title LIKE ? OR bc.Barcode LIKE ? OR bc.ShelfLocation LIKE ? "
-                + "ORDER BY bc.ISBN, bc.CopyNumber";
+                + "ORDER BY bc.ISBN, bc.CopyNumber "
+                + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         String kw = "%" + keyword + "%";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, kw);
             ps.setString(2, kw);
             ps.setString(3, kw);
+            ps.setInt(4, offset);
+            ps.setInt(5, limit);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(mapRow(rs));
@@ -104,6 +123,24 @@ public class BookcopyDAO extends DBContext {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public int getTotalSearchCopies(String keyword) {
+        String sql = "SELECT COUNT(*) FROM Book_Copy bc "
+                   + "JOIN Book b ON bc.ISBN = b.ISBN "
+                   + "WHERE b.Title LIKE ? OR bc.Barcode LIKE ? OR bc.ShelfLocation LIKE ?";
+        String kw = "%" + keyword + "%";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, kw);
+            ps.setString(2, kw);
+            ps.setString(3, kw);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     // ─── Thêm bản sao ────────────────────────────────────────────────────────

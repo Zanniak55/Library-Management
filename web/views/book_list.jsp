@@ -1,86 +1,60 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html>
-<html lang="vi">
-    <head>
-        <meta charset="UTF-8">
-        <title>Quản Lý Sách</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-        <style>
-            body {
-                background: #f5f7fa;
-            }
-            .page-header {
-                background: linear-gradient(135deg, #1e3c72, #2a5298);
-                color: white;
-                padding: 1.5rem 2rem;
-                border-radius: 12px;
-                margin-bottom: 1.5rem;
-            }
-            .table-card {
-                border-radius: 12px;
-                overflow: hidden;
-                box-shadow: 0 2px 12px rgba(0,0,0,.08);
-            }
-            .table thead {
-                background: #1e3c72;
-                color: #fff;
-            }
-            .badge-avail   {
-                background: #d1fae5;
-                color: #065f46;
-            }
-            .badge-noavail {
-                background: #fee2e2;
-                color: #991b1b;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container py-4">
+<%@ page import="model.Staff" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%
+    Staff staff = (Staff) session.getAttribute("staff");
+    if (staff == null) {
+        response.sendRedirect(request.getContextPath() + "/login");
+        return;
+    }
+    String ctx = request.getContextPath();
+    boolean isAdmin = "Admin".equals(staff.getRole());
+    request.setAttribute("pageTitle", "Quản lý Sách - Thư viện");
+    request.setAttribute("activePage", "books");
+%>
+<jsp:include page="/includes/header.jsp" />
 
-            <div class="page-header d-flex justify-content-between align-items-center">
-                <div>
-                    <a href="${pageContext.request.contextPath}/dashboard" style="text-decoration:none;color:white;"><h2 class="mb-0"><i class="bi bi-book-half me-2"></i>Quản Lý Sách</h2></a>
-                    <small class="opacity-75">Library Management System</small>
-                </div>
-                <a href="books?action=new" class="btn btn-warning fw-semibold">
-                    <i class="bi bi-plus-lg me-1"></i>Thêm Sách
-                </a>
-            </div>
-
-            <%-- Thông báo --%>
+            <!-- ALERTS -->
             <c:if test="${not empty sessionScope.success}">
-                <div class="alert alert-success alert-dismissible fade show">
-                    <i class="bi bi-check-circle-fill me-2"></i>${sessionScope.success}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+                <div class="alert alert-success">✅ ${sessionScope.success}</div>
                 <c:remove var="success" scope="session"/>
             </c:if>
             <c:if test="${not empty sessionScope.error}">
-                <div class="alert alert-danger alert-dismissible fade show">
-                    <i class="bi bi-exclamation-circle-fill me-2"></i>${sessionScope.error}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+                <div class="alert alert-danger">⚠️ ${sessionScope.error}</div>
                 <c:remove var="error" scope="session"/>
             </c:if>
 
-            <%-- Tìm kiếm --%>
-            <form action="books" method="get" class="mb-3 d-flex gap-2">
-                <input type="hidden" name="action" value="search">
-                <input type="text" name="keyword" class="form-control"
-                       placeholder="Tìm theo tên sách, tác giả, ISBN…"
-                       value="${not empty keyword ? keyword : ''}">
-                <button class="btn btn-primary px-4"><i class="bi bi-search"></i></button>
+            <!-- TOOLBAR -->
+            <div class="toolbar">
+                <div class="toolbar-left">
+                    <form action="books" method="get" class="search-group">
+                        <input type="hidden" name="action" value="search">
+                        <input type="text" name="keyword" class="search-input"
+                               placeholder="Tìm theo tên sách, tác giả, ISBN…"
+                               value="${not empty keyword ? keyword : ''}">
+                        <button class="search-btn" type="submit">🔍 Tìm</button>
+                    </form>
                     <c:if test="${not empty keyword}">
-                    <a href="books" class="btn btn-outline-secondary">Xóa lọc</a>
-                </c:if>
-            </form>
+                        <a href="books" style="font-size:13px;color:var(--primary);text-decoration:none;">✕ Xóa lọc</a>
+                    </c:if>
+                </div>
+            </div>
 
-            <%-- Bảng danh sách --%>
+            <!-- TABLE CARD -->
             <div class="table-card">
-                <table class="table table-hover mb-0">
+                <div class="table-card-header">
+                    <div class="table-card-header-left">
+                        <h3>📖 Danh sách Sách</h3>
+                        <span class="count-badge">
+                            ${books.size()} sách
+                        </span>
+                    </div>
+                    <div>
+                        <a href="books?action=new" class="btn-add">➕ Thêm Sách</a>
+                    </div>
+                </div>
+
+                <table>
                     <thead>
                         <tr>
                             <th>#</th>
@@ -90,48 +64,44 @@
                             <th>Thể Loại</th>
                             <th>NXB</th>
                             <th>Năm XB</th>
-                            <th class="text-center">SL</th>
-                            <th class="text-center">Còn Lại</th>
-                            <th class="text-center">Thao Tác</th>
+                            <th style="text-align:center;">SL</th>
+                            <th style="text-align:center;">Còn Lại</th>
+                            <th style="text-align:center;">Thao Tác</th>
                         </tr>
                     </thead>
                     <tbody>
                         <c:choose>
                             <c:when test="${empty books}">
                                 <tr>
-                                    <td colspan="10" class="text-center py-5 text-muted">
-                                        <i class="bi bi-inbox fs-3 d-block mb-2"></i>
-                                        Không có sách nào.
+                                    <td colspan="10">
+                                        <div class="empty-state">
+                                            <div class="icon">📖</div>
+                                            <p>Không tìm thấy sách nào.</p>
+                                        </div>
                                     </td>
                                 </tr>
                             </c:when>
                             <c:otherwise>
                                 <c:forEach var="b" items="${books}" varStatus="st">
                                     <tr>
-                                        <td class="text-muted">${st.index + 1}</td>
+                                        <td style="color:#aaa;">${(currentPage - 1) * 10 + st.index + 1}</td>
                                         <td><code>${b.isbn}</code></td>
-                                        <td class="fw-semibold">${b.title}</td>
+                                        <td><strong>${b.title}</strong></td>
                                         <td>${not empty b.authors ? b.authors : '—'}</td>
-                                        <td><span class="badge bg-secondary bg-opacity-10 text-dark">${b.categoryName}</span></td>
+                                        <td><span class="badge-type">${b.categoryName}</span></td>
                                         <td>${b.publisherName}</td>
                                         <td>${b.publicationYear}</td>
-                                        <td class="text-center">${b.totalQuantity}</td>
-                                        <td class="text-center">
-                                            <span class="badge rounded-pill px-3 py-1
-                                                  ${b.availableQuantity > 0 ? 'badge-avail' : 'badge-noavail'}">
+                                        <td style="text-align:center;">${b.totalQuantity}</td>
+                                        <td style="text-align:center;">
+                                            <span class="${b.availableQuantity > 0 ? 'badge-avail' : 'badge-noavail'}">
                                                 ${b.availableQuantity}
                                             </span>
                                         </td>
-                                        <td class="text-center" style="white-space:nowrap">
-                                            <a href="books?action=edit&isbn=${b.isbn}"
-                                               class="btn btn-sm btn-outline-primary me-1" title="Sửa">
-                                                <i class="bi bi-pencil-fill"></i>
-                                            </a>
-                                            <a href="books?action=delete&isbn=${b.isbn}"
-                                               class="btn btn-sm btn-outline-danger" title="Xóa"
-                                               onclick="return confirm('Xóa sách «${b.title}»?')">
-                                                <i class="bi bi-trash-fill"></i>
-                                            </a>
+                                        <td style="text-align:center;white-space:nowrap;">
+                                            <a href="books?action=edit&isbn=${b.isbn}" class="btn-edit" title="Sửa">✏️</a>
+                                            &nbsp;
+                                            <a href="#" class="btn-delete" title="Xóa"
+                                               onclick="confirmDelete('${b.isbn}', '${b.title}'); return false;">🗑️</a>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -139,10 +109,58 @@
                         </c:choose>
                     </tbody>
                 </table>
-            </div>
-            <p class="text-muted mt-2 small">Tổng cộng: <strong>${books.size()}</strong> sách</p>
-        </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
-</html>
+                
+                <c:if test="${totalPages > 1}">
+                    <div class="pagination" style="display:flex; justify-content:center; gap:8px; margin-top:20px; margin-bottom:10px;">
+                        <c:choose>
+                            <c:when test="${not empty keyword}">
+                                <c:set var="pageUrl" value="${pageContext.request.contextPath}/books?action=search&keyword=${keyword}&page=" />
+                            </c:when>
+                            <c:otherwise>
+                                <c:set var="pageUrl" value="${pageContext.request.contextPath}/books?action=list&page=" />
+                            </c:otherwise>
+                        </c:choose>
 
+                        <c:if test="${currentPage > 1}">
+                            <a href="${pageUrl}${currentPage - 1}" class="page-btn" style="padding:6px 12px; border:1px solid #cbd5e1; border-radius:6px; text-decoration:none; color:#475569;">Trước</a>
+                        </c:if>
+                        
+                        <c:forEach begin="1" end="${totalPages}" var="i">
+                            <a href="${pageUrl}${i}" class="page-btn" style="padding:6px 12px; border:1px solid ${currentPage == i ? 'var(--primary)' : '#cbd5e1'}; border-radius:6px; text-decoration:none; color:${currentPage == i ? '#fff' : '#475569'}; background:${currentPage == i ? 'var(--primary)' : '#fff'}; font-weight:${currentPage == i ? 'bold' : 'normal'};">${i}</a>
+                        </c:forEach>
+
+                        <c:if test="${currentPage < totalPages}">
+                            <a href="${pageUrl}${currentPage + 1}" class="page-btn" style="padding:6px 12px; border:1px solid #cbd5e1; border-radius:6px; text-decoration:none; color:#475569;">Sau</a>
+                        </c:if>
+                    </div>
+                </c:if>
+
+            </div>
+
+    <!-- DELETE MODAL -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-box">
+            <h4>⚠️ Xác nhận xóa</h4>
+            <p id="deleteModalText">Bạn có chắc muốn xóa sách này?</p>
+            <div class="modal-actions">
+                <button class="btn-cancel-modal" onclick="closeModal()">Hủy</button>
+                <a id="deleteConfirmLink" href="#" class="btn-confirm-delete">🗑️ Xóa</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function confirmDelete(isbn, title) {
+            document.getElementById('deleteModalText').textContent =
+                'Xóa sách "' + title + '"? Hành động này sẽ xóa cả các bản sao liên quan!';
+            document.getElementById('deleteConfirmLink').href = 'books?action=delete&isbn=' + isbn;
+            document.getElementById('deleteModal').classList.add('show');
+        }
+        function closeModal() {
+            document.getElementById('deleteModal').classList.remove('show');
+        }
+        document.getElementById('deleteModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+    </script>
+<jsp:include page="/includes/footer.jsp" />

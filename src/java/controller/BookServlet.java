@@ -100,17 +100,9 @@ public class BookServlet extends HttpServlet {
                 boolean deleted = bookDAO.deleteBook(delIsbn);
                 request.getSession().setAttribute(
                         deleted ? "success" : "error",
-                        deleted ? "Xóa sách thành công." : "Xóa sách thất bại."
+                        deleted ? "Xóa sách thành công." : "Xóa sách thất bại. Sách này có thể đang có bản sao, người mượn hoặc nằm trong lịch sử mượn."
                 );
                 response.sendRedirect("books");
-                break;
-
-            case "search":
-                String keyword = request.getParameter("keyword");
-                List<Book> searchResult = bookDAO.searchBooks(keyword == null ? "" : keyword);
-                request.setAttribute("books", searchResult);
-                request.setAttribute("keyword", keyword);
-                request.getRequestDispatcher("/views/book_list.jsp").forward(request, response);
                 break;
 
             // ── Kiểm tra tên sách realtime từ JS fetch ───────────────────────
@@ -120,9 +112,38 @@ public class BookServlet extends HttpServlet {
                 response.setContentType("text/plain;charset=UTF-8");
                 response.getWriter().write(titleExisted ? "existed" : "ok");
                 return;
-
-            default: // list
-                request.setAttribute("books", bookDAO.getAllBooks());
+                
+            default:
+            case "search":
+            case "list":
+                String keyword = request.getParameter("keyword");
+                if (keyword == null) keyword = "";
+                
+                int page = 1;
+                int limit = 10;
+                String pageParam = request.getParameter("page");
+                if (pageParam != null && !pageParam.isEmpty()) {
+                    try { page = Integer.parseInt(pageParam); } catch (NumberFormatException e) { }
+                }
+                int offset = (page - 1) * limit;
+                
+                List<Book> resultList;
+                int totalRecords;
+                
+                if (keyword.isEmpty()) {
+                    resultList = bookDAO.getBooks(offset, limit);
+                    totalRecords = bookDAO.getTotalBooks();
+                } else {
+                    resultList = bookDAO.searchBooks(keyword, offset, limit);
+                    totalRecords = bookDAO.getTotalSearchBooks(keyword);
+                }
+                
+                int totalPages = (int) Math.ceil((double) totalRecords / limit);
+                
+                request.setAttribute("books", resultList);
+                request.setAttribute("keyword", keyword);
+                request.setAttribute("currentPage", page);
+                request.setAttribute("totalPages", totalPages);
                 request.getRequestDispatcher("/views/book_list.jsp").forward(request, response);
                 break;
         }
@@ -198,7 +219,11 @@ public class BookServlet extends HttpServlet {
         }
 
         request.getSession().setAttribute(ok ? "success" : "error", msg);
-        response.sendRedirect("books");
+        String redirectUrl = "books";
+        if (ok) {
+            redirectUrl += "?keyword=" + java.net.URLEncoder.encode(book.getTitle(), "UTF-8");
+        }
+        response.sendRedirect(redirectUrl);
     }
 
     // ─── Helper ──────────────────────────────────────────────────────────────

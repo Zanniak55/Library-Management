@@ -24,17 +24,33 @@ public class StaffDAO extends DBContext {
         return null;
     }
 
-    public List<Staff> getAllStaff() {
+    public List<Staff> getStaffs(int offset, int limit) {
         List<Staff> list = new ArrayList<>();
-        String sql = "SELECT StaffID, FullName, Email, Role FROM Staff ORDER BY StaffID";
-        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                list.add(mapRow(rs));
+        String sql = "SELECT StaffID, FullName, Email, Role FROM Staff ORDER BY StaffID "
+                   + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, offset);
+            ps.setInt(2, limit);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(StaffDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return list;
+    }
+
+    public int getTotalStaffs() {
+        String sql = "SELECT COUNT(*) FROM Staff";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     public Staff getStaffByID(int staffID) {

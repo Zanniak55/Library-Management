@@ -182,7 +182,7 @@
         <button type="submit" class="btn-submit">↩ Đăng nhập</button>
     </form>
 
-    <a href="${pageContext.request.contextPath}/reader-login" class="reader-link">
+    <a href="${pageContext.request.contextPath}/user-login" class="reader-link">
         Đăng nhập dành cho độc giả
     </a>
 </div>

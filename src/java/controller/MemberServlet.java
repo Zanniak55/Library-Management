@@ -76,8 +76,25 @@ public class MemberServlet extends HttpServlet {
 
     private void listMembers(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        List<Member> memberList = dao.getAllMembers();
+        int page = 1;
+        int pageSize = 10;
+        try {
+            if (req.getParameter("page") != null) {
+                page = Integer.parseInt(req.getParameter("page"));
+            }
+        } catch (NumberFormatException ignored) {}
+        if (page < 1) page = 1;
+
+        int totalRecords = dao.getTotalMembers();
+        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+        if (page > totalPages && totalPages > 0) page = totalPages;
+
+        int offset = (page - 1) * pageSize;
+        List<Member> memberList = dao.getMembers(offset, pageSize);
+
         req.setAttribute("memberList", memberList);
+        req.setAttribute("currentPage", page);
+        req.setAttribute("totalPages", totalPages);
         req.setAttribute("action", "list");
         req.getRequestDispatcher("member_list.jsp").forward(req, resp);
     }
@@ -85,12 +102,32 @@ public class MemberServlet extends HttpServlet {
     private void searchMembers(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         String keyword = req.getParameter("keyword");
+        if (keyword == null || keyword.trim().isEmpty()) {
+            keyword = (String) req.getAttribute("forcedKeyword");
+        }
         if (keyword == null) {
             keyword = "";
         }
-        List<Member> memberList = dao.searchMembers(keyword.trim());
+        int page = 1;
+        int pageSize = 10;
+        try {
+            if (req.getParameter("page") != null) {
+                page = Integer.parseInt(req.getParameter("page"));
+            }
+        } catch (NumberFormatException ignored) {}
+        if (page < 1) page = 1;
+
+        int totalRecords = dao.getTotalSearchMembers(keyword.trim());
+        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+        if (page > totalPages && totalPages > 0) page = totalPages;
+
+        int offset = (page - 1) * pageSize;
+        List<Member> memberList = dao.searchMembers(keyword.trim(), offset, pageSize);
+
         req.setAttribute("memberList", memberList);
         req.setAttribute("keyword", keyword);
+        req.setAttribute("currentPage", page);
+        req.setAttribute("totalPages", totalPages);
         req.setAttribute("action", "search");
         req.getRequestDispatcher("member_list.jsp").forward(req, resp);
     }
@@ -131,6 +168,9 @@ public class MemberServlet extends HttpServlet {
         boolean ok = dao.addMember(m);
         if (ok) {
             request.setAttribute("successMsg", "Thêm thành viên \"" + m.getFullName() + "\" thành công!");
+            request.setAttribute("forcedKeyword", m.getFullName());
+            searchMembers(request, response);
+            return;
         } else {
             request.setAttribute("errorMsg", "Thêm thất bại! Username có thể đã tồn tại.");
         }

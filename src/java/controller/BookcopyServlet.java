@@ -112,16 +112,35 @@ public class BookcopyServlet extends HttpServlet {
                 break;
 
             case "search":
+            case "list":
                 String keyword = request.getParameter("keyword");
-                List<Bookcopy> results = copyDAO.searchCopies(keyword == null ? "" : keyword);
-                request.setAttribute("copies", results);
+                if (keyword == null) keyword = "";
+                
+                int page = 1;
+                int limit = 10;
+                String pageParam = request.getParameter("page");
+                if (pageParam != null && !pageParam.isEmpty()) {
+                    try { page = Integer.parseInt(pageParam); } catch (NumberFormatException e) { }
+                }
+                int offset = (page - 1) * limit;
+                
+                List<Bookcopy> resultList;
+                int totalRecords;
+                
+                if (keyword.isEmpty()) {
+                    resultList = copyDAO.getCopies(offset, limit);
+                    totalRecords = copyDAO.getTotalCopies();
+                } else {
+                    resultList = copyDAO.searchCopies(keyword, offset, limit);
+                    totalRecords = copyDAO.getTotalSearchCopies(keyword);
+                }
+                
+                int totalPages = (int) Math.ceil((double) totalRecords / limit);
+                
+                request.setAttribute("copies", resultList);
                 request.setAttribute("keyword", keyword);
-                request.setAttribute("books", copyDAO.getAllBooks());
-                request.getRequestDispatcher("/views/bookcopy_list.jsp").forward(request, response);
-                break;
-
-            default: // list
-                request.setAttribute("copies", copyDAO.getAllCopies());
+                request.setAttribute("currentPage", page);
+                request.setAttribute("totalPages", totalPages);
                 request.setAttribute("books", copyDAO.getAllBooks());
                 request.getRequestDispatcher("/views/bookcopy_list.jsp").forward(request, response);
                 break;

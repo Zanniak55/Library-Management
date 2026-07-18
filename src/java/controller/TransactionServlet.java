@@ -2,6 +2,7 @@ package controller;
 
 import dao.TransactionDAO;
 import java.io.IOException;
+import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -32,9 +33,34 @@ public class TransactionServlet extends HttpServlet {
                 dao.updateOverdue();
                 String keyword = request.getParameter("keyword");
                 String status  = request.getParameter("status");
-                request.setAttribute("transactions", dao.searchTransactions(keyword, status));
+                
+                int page = 1;
+                int limit = 10;
+                String pageParam = request.getParameter("page");
+                if (pageParam != null && !pageParam.isEmpty()) {
+                    try { page = Integer.parseInt(pageParam); } catch (NumberFormatException e) { }
+                }
+                int offset = (page - 1) * limit;
+
+                List<model.Transaction> list;
+                int totalRecords;
+                
+                if ((keyword == null || keyword.trim().isEmpty()) && (status == null || status.trim().isEmpty())) {
+                    list = dao.getTransactions(offset, limit);
+                    totalRecords = dao.getTotalTransactions();
+                } else {
+                    list = dao.searchTransactions(keyword, status, offset, limit);
+                    totalRecords = dao.getTotalSearchTransactions(keyword, status);
+                }
+
+                int totalPages = (int) Math.ceil((double) totalRecords / limit);
+
+                request.setAttribute("transactions", list);
                 request.setAttribute("keyword", keyword != null ? keyword : "");
                 request.setAttribute("status",  status  != null ? status  : "");
+                request.setAttribute("currentPage", page);
+                request.setAttribute("totalPages", totalPages);
+                
                 request.getRequestDispatcher("/quan_li_tra_va_muon/loan_list.jsp")
                         .forward(request, response);
             }

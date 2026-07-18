@@ -7,36 +7,13 @@ import model.Publisher;
 
 public class PublisherDAO extends DBContext {
 
-    public List<Publisher> getAllPublishers() {
+    public List<Publisher> getPublishers(int offset, int limit) {
         List<Publisher> list = new ArrayList<>();
-        String sql = "SELECT PublisherID, PublisherName, Address, Phone, Email FROM Publisher ORDER BY PublisherName";
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                list.add(new Publisher(
-                        rs.getInt("PublisherID"),
-                        rs.getString("PublisherName"),
-                        rs.getString("Address"),
-                        rs.getString("Phone"),
-                        rs.getString("Email")
-                ));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-
-    public List<Publisher> searchPublishers(String keyword) {
-        List<Publisher> list = new ArrayList<>();
-        String sql = "SELECT PublisherID, PublisherName, Address, Phone, Email FROM Publisher "
-                   + "WHERE PublisherName LIKE ? OR Email LIKE ? OR Phone LIKE ? "
-                   + "ORDER BY PublisherName";
-        String kw = "%" + keyword + "%";
+        String sql = "SELECT PublisherID, PublisherName, Address, Phone, Email FROM Publisher ORDER BY PublisherName "
+                   + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setNString(1, kw);
-            ps.setString(2, kw);
-            ps.setString(3, kw);
+            ps.setInt(1, offset);
+            ps.setInt(2, limit);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(new Publisher(
@@ -52,6 +29,64 @@ public class PublisherDAO extends DBContext {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public int getTotalPublishers() {
+        String sql = "SELECT COUNT(*) FROM Publisher";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<Publisher> searchPublishers(String keyword, int offset, int limit) {
+        List<Publisher> list = new ArrayList<>();
+        String sql = "SELECT PublisherID, PublisherName, Address, Phone, Email FROM Publisher "
+                   + "WHERE PublisherName LIKE ? OR Email LIKE ? OR Phone LIKE ? "
+                   + "ORDER BY PublisherName "
+                   + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        String kw = "%" + keyword + "%";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setNString(1, kw);
+            ps.setString(2, kw);
+            ps.setString(3, kw);
+            ps.setInt(4, offset);
+            ps.setInt(5, limit);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new Publisher(
+                            rs.getInt("PublisherID"),
+                            rs.getString("PublisherName"),
+                            rs.getString("Address"),
+                            rs.getString("Phone"),
+                            rs.getString("Email")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public int getTotalSearchPublishers(String keyword) {
+        String sql = "SELECT COUNT(*) FROM Publisher "
+                   + "WHERE PublisherName LIKE ? OR Email LIKE ? OR Phone LIKE ?";
+        String kw = "%" + keyword + "%";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setNString(1, kw);
+            ps.setString(2, kw);
+            ps.setString(3, kw);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     public Publisher getPublisherByID(int id) {

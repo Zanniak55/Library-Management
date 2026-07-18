@@ -55,8 +55,21 @@ public class StaffServlet extends HttpServlet {
     }
     private void listStaff(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        List<Staff> staffList = dao.getAllStaff();
+        int page = 1;
+        int limit = 10;
+        String pageParam = req.getParameter("page");
+        if (pageParam != null && !pageParam.isEmpty()) {
+            try { page = Integer.parseInt(pageParam); } catch (NumberFormatException e) { }
+        }
+        int offset = (page - 1) * limit;
+
+        List<Staff> staffList = dao.getStaffs(offset, limit);
+        int totalRecords = dao.getTotalStaffs();
+        int totalPages = (int) Math.ceil((double) totalRecords / limit);
+
         req.setAttribute("staffList", staffList);
+        req.setAttribute("currentPage", page);
+        req.setAttribute("totalPages", totalPages);
         req.getRequestDispatcher("staff_list.jsp").forward(req, resp);
     }
     private void editStaff(HttpServletRequest req, HttpServletResponse resp)
@@ -69,7 +82,7 @@ public class StaffServlet extends HttpServlet {
                 listStaff(req, resp);
                 return;
             }
-            req.setAttribute("staff", staff);
+            req.setAttribute("editStaff", staff);
             req.getRequestDispatcher("staff_form.jsp").forward(req, resp);
         } catch (NumberFormatException e) {
             resp.sendRedirect("staffs?action=list");

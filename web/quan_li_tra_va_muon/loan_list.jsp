@@ -1,129 +1,84 @@
-﻿<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.util.List, model.Transaction, model.Staff"%>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Danh sách mượn sách</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: Arial, sans-serif; background: #f0f2f5; display: flex; }
-
-        /* SIDEBAR */
-        .sidebar { width: 220px; min-height: 100vh; background: #1a2238; color: white; position: fixed; top: 0; left: 0; }
-        .sidebar-logo { padding: 20px 16px; font-size: 18px; font-weight: bold; border-bottom: 1px solid #2d3a55; display: flex; align-items: center; gap: 8px; }
-        .sidebar-logo span { color: #4a90d9; font-size: 22px; }
-        .sidebar-menu { padding: 12px 0; }
-        .sidebar-menu a { display: flex; align-items: center; gap: 10px; padding: 11px 20px; color: #aab4c8; text-decoration: none; font-size: 14px; transition: background 0.2s; }
-        .sidebar-menu a:hover, .sidebar-menu a.active { background: #2d3a55; color: white; }
-        .sidebar-menu .section-title { padding: 14px 20px 6px; font-size: 11px; color: #556; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* MAIN */
-        .main { margin-left: 220px; flex: 1; min-height: 100vh; }
-
-        /* TOPBAR */
-        .topbar { background: white; padding: 14px 28px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-        .topbar h2 { font-size: 20px; color: #333; }
-        .topbar-right { display: flex; align-items: center; gap: 12px; font-size: 14px; color: #555; }
-        .badge-role { background: #4a90d9; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; }
-        .btn-logout { border: 1px solid #ccc; padding: 6px 14px; border-radius: 4px; color: #555; font-size: 13px; text-decoration: none; }
-        .btn-logout:hover { background: #f5f5f5; }
-
-        /* CONTENT */
-        .content { padding: 28px; }
-
-        /* MESSAGES */
-        .msg { padding: 10px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 14px; }
-        .ok  { background: #d4edda; color: #155724; }
-        .err { background: #f8d7da; color: #721c24; }
-
-        /* TOOLBAR */
-        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        a.btn-create { background: #27ae60; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: bold; }
-        a.btn-create:hover { background: #219150; }
-
-        /* SEARCH BAR */
-        .search-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; background: white; padding: 12px 16px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-        .search-bar input[type=text] { flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; }
-        .search-bar input[type=text]:focus { outline: none; border-color: #4a90d9; }
-        .search-bar select { padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; }
-        .search-bar button { padding: 8px 18px; background: #4a90d9; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; }
-        .search-bar button:hover { background: #357abd; }
-        .search-bar a.clear-btn { padding: 8px 12px; color: #888; font-size: 13px; text-decoration: none; white-space: nowrap; }
-        .search-bar a.clear-btn:hover { color: #333; }
-
-        /* TABLE */
-        .table-wrap { background: white; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; }
-        table { border-collapse: collapse; width: 100%; }
-        th { background: #34495e; color: white; padding: 11px 14px; text-align: left; font-size: 13px; font-weight: 600; }
-        td { padding: 10px 14px; border-bottom: 1px solid #f0f0f0; font-size: 13px; color: #333; }
-        tr:last-child td { border-bottom: none; }
-        tr:hover td { background: #f8f9fb; }
-        tr.overdue td { background: #fff5f5; }
-        tr.overdue:hover td { background: #fee; }
-        tr.overdue .status-cell { color: #c0392b; font-weight: bold; }
-
-        /* BUTTONS */
-        a.detail-btn { background: #95a5a6; color: white; padding: 4px 10px; border-radius: 4px; text-decoration: none; font-size: 12px; margin-right: 4px; }
-        a.detail-btn:hover { background: #7f8c8d; }
-        a.return-btn { background: #e74c3c; color: white; padding: 4px 10px; border-radius: 4px; text-decoration: none; font-size: 12px; }
-        a.return-btn:hover { background: #c0392b; }
-
-        .empty { text-align: center; padding: 40px; color: #aaa; font-size: 14px; }
-    </style>
-</head>
-<body>
-
 <%
     Staff staff = (Staff) session.getAttribute("staff");
+    if (staff == null) {
+        response.sendRedirect(request.getContextPath() + "/login");
+        return;
+    }
     String ctx = request.getContextPath();
-    boolean isAdmin = "Admin".equals(staff != null ? staff.getRole() : "");
+    boolean isAdmin = "Admin".equals(staff.getRole());
+    request.setAttribute("pageTitle", "Danh sách mượn sách");
+    request.setAttribute("activePage", "loans");
 %>
+<jsp:include page="/includes/header.jsp" />
+<style>
+/* Loan-specific styles */
+.msg { padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; font-family: 'Inter', sans-serif; font-weight: 500; }
+.ok  { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+.err { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-    <div class="sidebar-logo"><span>📚</span> Thư viện</div>
-    <div class="sidebar-menu">
-                <a href="<%= ctx %>/dashboard">🏠 Dashboard</a>
-                <% if (isAdmin) { %>
-                <a href="<%= ctx %>/staffs">👤 Quản lý nhân sự</a>
-                <% } %>
-                <a href="<%= ctx %>/members">👥 Thành viên</a>
-                <a href="<%= ctx %>/books">📖 Sách</a>
-                <a href="<%= ctx %>/bookcopies">📦 Bản sao sách</a>
-                <a href="#">🏷️ Thể loại</a>
-                <a href="<%= ctx %>/authors">✍️ Tác giả</a>
-                <a href="<%= ctx %>/publishers">🏢 Nhà xuất bản</a>
-                <% if (!isAdmin) { %>
-                <a href="<%= ctx %>/loan?action=list" class="active">📋 Mượn/Trả</a>
-                <a href="<%= ctx %>/fines?action=list">💰 Phạt</a>
-                <% } %>
-                <a href="<%= ctx %>/loan?action=logout">🚪 Đăng xuất</a>
-            </div>
-        </div>
+a.btn-create {
+    background: var(--primary); color: white; padding: 10px 20px; border-radius: 8px;
+    text-decoration: none; font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif;
+    display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+a.btn-create:hover { background: var(--primary-hover); transform: translateY(-1px); }
 
-        <!-- MAIN -->
-<div class="main">
-    <!-- TOPBAR -->
-    <div class="topbar">
-        <h2>Danh sách mượn / trả sách</h2>
-        <div class="topbar-right">
-            👤 <%= staff != null ? staff.getFullName() : "" %>
-            <% if (staff != null) { %><span class="badge-role"><%= staff.getRole() %></span><% } %>
-            <a href="<%= ctx %>/loan?action=logout" class="btn-logout">Đăng xuất</a>
-        </div>
-    </div>
+.search-bar {
+    display: flex; gap: 10px; align-items: center; margin-bottom: 24px;
+    background: white; padding: 16px 20px; border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); font-family: 'Inter', sans-serif;
+}
+.search-bar input[type=text] {
+    flex: 1; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px;
+    font-size: 14px; font-family: 'Inter', sans-serif; color: #334155;
+}
+.search-bar input[type=text]:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+.search-bar select {
+    padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 8px;
+    font-size: 14px; font-family: 'Inter', sans-serif; color: #334155;
+}
+.search-bar button {
+    padding: 10px 20px; background: var(--primary); color: white; border: none;
+    border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600;
+    font-family: 'Inter', sans-serif; transition: background 0.2s;
+}
+.search-bar button:hover { background: var(--primary-hover); }
+.search-bar a.clear-btn { padding: 10px 14px; color: #64748b; font-size: 13px; text-decoration: none; white-space: nowrap; font-weight: 500; }
+.search-bar a.clear-btn:hover { color: #1e293b; }
 
-    <!-- CONTENT -->
-    <div class="content">
+.table-wrap {
+    background: white; border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); overflow: hidden;
+}
+
+tr.overdue td { background: #fef2f2; }
+tr.overdue:hover td { background: #fde8e8; }
+tr.overdue .status-cell { color: #dc2626; font-weight: 700; }
+
+a.detail-btn {
+    background: var(--primary); color: white; padding: 6px 14px; border-radius: 6px;
+    text-decoration: none; font-size: 13px; font-weight: 500; margin-right: 6px;
+    font-family: 'Inter', sans-serif; transition: all 0.2s;
+}
+a.detail-btn:hover { opacity: 0.85; }
+a.return-btn {
+    background: #ef4444; color: white; padding: 6px 14px; border-radius: 6px;
+    text-decoration: none; font-size: 13px; font-weight: 500;
+    font-family: 'Inter', sans-serif; transition: all 0.2s;
+}
+a.return-btn:hover { background: #dc2626; }
+</style>
 
         <% String msg = request.getParameter("msg");
-           if ("borrowed".equals(msg)) { %><div class="msg ok">✓ Tạo phiếu mượn thành công!</div><% }
-           if ("returned".equals(msg)) { %><div class="msg ok">✓ Trả sách thành công!</div><% }
-           if ("error".equals(msg))    { %><div class="msg err">✕ Có lỗi xảy ra, thử lại.</div><% } %>
+           if ("borrowed".equals(msg)) { %><div class="msg ok">✅ Tạo phiếu mượn thành công!</div><% }
+           if ("returned".equals(msg)) { %><div class="msg ok">✅ Trả sách thành công!</div><% }
+           if ("error".equals(msg))    { %><div class="msg err">⚠️ Có lỗi xảy ra, thử lại.</div><% } %>
 
         <div class="toolbar">
-            <a href="<%= ctx %>/loan?action=borrow" class="btn-create">+ Tạo phiếu mượn</a>
+            <a href="<%= ctx %>/loan?action=borrow" class="btn-create">➕ Tạo phiếu mượn</a>
         </div>
 
         <%
@@ -149,6 +104,7 @@
 
         <div class="table-wrap">
             <table>
+                <thead>
                 <tr>
                     <th>Mã phiếu</th>
                     <th>Thành viên</th>
@@ -156,28 +112,37 @@
                     <th>Hạn trả</th>
                     <th>Ngày trả</th>
                     <th>Trạng thái</th>
-                    <th>Thao tác</th>
+                    <th style="text-align:center;">Thao tác</th>
                 </tr>
+                </thead>
+                <tbody>
                 <%
                     List<Transaction> list = (List<Transaction>) request.getAttribute("transactions");
                     if (list == null || list.isEmpty()) {
                 %>
-                <tr><td colspan="7" class="empty">Không có phiếu mượn nào.</td></tr>
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <div class="icon">📋</div>
+                            <p>Không có phiếu mượn nào.</p>
+                        </div>
+                    </td>
+                </tr>
                 <%
                     } else {
                         for (Transaction t : list) {
                             boolean overdue = "Quá hạn".equals(t.getStatus());
                 %>
                 <tr class="<%= overdue ? "overdue" : "" %>">
-                    <td>#<%= t.getTransactionID() %></td>
-                    <td><%= t.getMemberName() %></td>
+                    <td style="color:#94a3b8;">#<%= t.getTransactionID() %></td>
+                    <td><strong><%= t.getMemberName() %></strong></td>
                     <td><%= t.getBorrowDate() %></td>
                     <td><%= t.getDueDate() %></td>
                     <td><%= t.getReturnDate() != null ? t.getReturnDate() : "—" %></td>
                     <td class="<%= overdue ? "status-cell" : "" %>">
                         <%= t.getStatus() %><%= overdue ? " ⚠️" : "" %>
                     </td>
-                    <td>
+                    <td style="text-align:center;white-space:nowrap;">
                         <a href="<%= ctx %>/loan?action=detail&id=<%= t.getTransactionID() %>" class="detail-btn">Chi tiết</a>
                         <% if ("Đang mượn".equals(t.getStatus()) || overdue) { %>
                         <a href="<%= ctx %>/loan?action=return&id=<%= t.getTransactionID() %>"
@@ -190,11 +155,35 @@
                         }
                     }
                 %>
+                </tbody>
             </table>
         </div>
 
-    </div>
-</div>
+        <% 
+            Integer totalPages = (Integer) request.getAttribute("totalPages");
+            Integer currentPage = (Integer) request.getAttribute("currentPage");
+            if (totalPages != null && totalPages > 1) {
+                String keyword = (String) request.getAttribute("keyword");
+                String status = (String) request.getAttribute("status");
+                String pageUrl = ctx + "/loan?action=list";
+                if (keyword != null && !keyword.isEmpty()) pageUrl += "&keyword=" + keyword;
+                if (status != null && !status.isEmpty()) pageUrl += "&status=" + status;
+                pageUrl += "&page=";
+        %>
+            <div class="pagination" style="display:flex; justify-content:center; gap:8px; margin-top:20px; margin-bottom:10px;">
+                <% if (currentPage > 1) { %>
+                    <a href="<%= pageUrl %><%= currentPage - 1 %>" class="page-btn" style="padding:6px 12px; border:1px solid #cbd5e1; border-radius:6px; text-decoration:none; color:#475569;">Trước</a>
+                <% } %>
+                
+                <% for (int i = 1; i <= totalPages; i++) { 
+                    boolean isCurrent = (currentPage == i);
+                %>
+                    <a href="<%= pageUrl %><%= i %>" class="page-btn" style="padding:6px 12px; border:1px solid <%= isCurrent ? "var(--primary)" : "#cbd5e1" %>; border-radius:6px; text-decoration:none; color:<%= isCurrent ? "#fff" : "#475569" %>; background:<%= isCurrent ? "var(--primary)" : "#fff" %>; font-weight:<%= isCurrent ? "bold" : "normal" %>;"><%= i %></a>
+                <% } %>
 
-</body>
-</html>
+                <% if (currentPage < totalPages) { %>
+                    <a href="<%= pageUrl %><%= currentPage + 1 %>" class="page-btn" style="padding:6px 12px; border:1px solid #cbd5e1; border-radius:6px; text-decoration:none; color:#475569;">Sau</a>
+                <% } %>
+            </div>
+        <% } %>
+<jsp:include page="/includes/footer.jsp" />
